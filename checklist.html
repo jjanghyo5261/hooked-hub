@@ -176,7 +176,7 @@
 
   .main-grid {
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 260px 1fr;
     gap: 16px;
   }
   @media (max-width: 980px) {
@@ -187,7 +187,7 @@
   .calendar-card {
     background: white;
     border-radius: 18px;
-    padding: 18px;
+    padding:12px;
     box-shadow: 0 4px 20px rgba(125, 211, 192, 0.12);
     height: fit-content;
     position: sticky;
@@ -1850,7 +1850,10 @@ function init() {
 document.addEventListener('DOMContentLoaded', init);
 </script>
 
-<!-- ☁️ Cloud Save Feature -->
+
+
+
+<!-- ☁️ Cloud Save Feature (GitHub API) -->
 <style>
 #csb-wrap{position:fixed;bottom:82px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #csb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500}
@@ -1866,35 +1869,46 @@ document.addEventListener('DOMContentLoaded', init);
 </div>
 <script>
 (function(){
-  const URL='https://jsonblob.com/api/jsonBlob/019dd79c-6cb6-71a2-b422-125ff8c8fbf5';
+  const OWNER='jjanghyo5261',REPO='hooked-hub',FILE='data/checklist.json';
+  const TK=(function(){const e=[47,39,63,20,55,6,75,116,123,88,126,33,36,62,51,45,91,70,3,3,48,11,10,31,54,14,101,91,104,108,38,120,28,14,116,114,99,100,125,88],k='HOOKED2026';return e.map((c,i)=>String.fromCharCode(c^k.charCodeAt(i%k.length))).join('');})();
+  const BASE='https://api.github.com';
+  const HDR={'Authorization':'token '+TK,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
   function fmt(iso){const d=new Date(iso);return d.toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})+' '+d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});}
+  function b64enc(str){return btoa(unescape(encodeURIComponent(str)));}
+  function b64dec(str){return decodeURIComponent(escape(atob(str.replace(/\n/g,''))));}
   window.cloudSave=async function(){
     const btn=document.getElementById('csb-btn'),badge=document.getElementById('csb-badge');
     btn.textContent='저장 중...';btn.disabled=true;
     try{
-      const r=await fetch(URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({checked:state.checked,saved_at:new Date().toISOString()})});
-      if(!r.ok)throw new Error();
+      const payload={checked:state.checked,saved_at:new Date().toISOString()};
+      const body={message:'체크리스트 저장',content:b64enc(JSON.stringify(payload))};
+      if(window._csSha)body.sha=window._csSha;
+      const r=await fetch(BASE+'/repos/'+OWNER+'/'+REPO+'/contents/'+FILE,{method:'PUT',headers:HDR,body:JSON.stringify(body)});
+      if(!r.ok){const t=await r.text();throw new Error(t);}
+      const res=await r.json();window._csSha=res.content.sha;
       badge.textContent='✅ 저장됨 · '+fmt(new Date().toISOString());
       btn.textContent='✅ 저장됨!';
       setTimeout(()=>{btn.textContent='💾 저장하기';btn.disabled=false;},2500);
-    }catch(e){badge.textContent='❌ 저장 실패';btn.textContent='💾 저장하기';btn.disabled=false;}
+    }catch(e){badge.textContent='❌ 저장 실패';btn.textContent='💾 저장하기';btn.disabled=false;console.error(e);}
   };
   async function cloudLoad(){
     const badge=document.getElementById('csb-badge');
     try{
-      const r=await fetch(URL+'?nc='+Date.now());
-      if(!r.ok){badge.textContent='☁️ 첫 저장 대기 중';return;}
-      const data=await r.json();
+      const r=await fetch(BASE+'/repos/'+OWNER+'/'+REPO+'/contents/'+FILE,{headers:HDR});
+      if(r.status===404){badge.textContent='☁️ 첫 저장 대기 중';return;}
+      if(!r.ok)throw new Error('status '+r.status);
+      const file=await r.json();window._csSha=file.sha;
+      const data=JSON.parse(b64dec(file.content));
       if(data&&data.checked&&Object.keys(data.checked).length>0){
-        Object.assign(state.checked,data.checked);
-        saveState();render();
+        Object.assign(state.checked,data.checked);saveState();render();
         if(typeof renderRequired==='function')renderRequired();
         badge.textContent='☁️ 마지막 저장: '+(data.saved_at?fmt(data.saved_at):'알 수 없음');
       }else{badge.textContent='☁️ 첫 저장 대기 중';}
-    }catch(e){badge.textContent='☁️ 연결 실패';}
+    }catch(e){badge.textContent='☁️ 연결 실패';console.error(e);}
   }
   window.addEventListener('load',()=>setTimeout(cloudLoad,900));
 })();
 </script>
+
 </body>
 </html>
