@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOOKED 손익계산서</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto Sans KR',sans-serif;background:#EEF2F7;color:#1E293B;min-height:100vh}
+.hd{background:linear-gradient(135deg,#1C2B3A,#243447);padding:20px 24px 0}
+.hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:44px;height:44px;background:#FF6B35;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand-name{font-size:20px;font-weight:800;color:white;letter-spacing:3px}
+.brand-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px}
+.hd-btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{padding:7px 12px;border-radius:8px;border:none;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-ghost{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.15)}
+.btn-ghost:hover{background:rgba(255,255,255,0.18)}
+.btn-brand{background:#FF6B35;color:white}
+.btn-brand:hover{background:#E85D2A}
+.btn-scen{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.12);font-size:10px}
+.btn-scen:hover{background:rgba(255,255,255,0.16);color:white}
+.btn-scen.s-red{border-color:rgba(248,113,113,.5);color:#fca5a5}
+.btn-scen.s-yel{border-color:rgba(251,191,36,.5);color:#fde68a}
+.btn-scen.s-grn{border-color:rgba(74,222,128,.5);color:#86efac}
+.scen-bar{display:flex;align-items:center;gap:6px;padding:0 0 12px;flex-wrap:wrap}
+.scen-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:.5px;margin-right:2px}
+.kpi-bar{display:flex;border-radius:12px 12px 0 0;overflow:hidden}
+.kpi{flex:1;padding:12px 14px 14px;background:rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.07)}
+.kpi:last-child{border-right:none}
+.kpi-lbl{font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:.5px;margin-bottom:3px;text-transform:uppercase}
+.kpi-val{font-size:15px;font-weight:800;color:white}
+.kpi-val.pos{color:#4ade80}.kpi-val.neg{color:#f87171}.kpi-val.warn{color:#fcd34d}
+.kpi-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px}
+.wrap{max-width:980px;margin:0 auto;padding:20px 14px;display:flex;flex-direction:column;gap:16px}
+.card{background:white;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.07);overflow:hidden}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #F1F5F9;background:#F8FAFC}
+.sec-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#1E293B}
+.sec-dot{width:7px;height:7px;border-radius:50%}
+.sec-info{font-size:10px;color:#94A3B8}
+.tbl-head{display:grid;grid-template-columns:18px 1fr 175px 88px 135px;padding:6px 18px;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+.th{font-size:9px;font-weight:700;color:#94A3B8;letter-spacing:.6px}.th.r{text-align:right}
+.row{display:grid;grid-template-columns:18px 1fr 175px 88px 135px;padding:0 18px;border-bottom:1px solid #F1F5F9;align-items:center;min-height:44px}
+.row:last-child{border-bottom:none}
+.ri{font-size:10px;color:#CBD5E1;display:flex;align-items:center}
+.rl{font-size:12px;color:#475569;font-weight:500;padding:7px 7px 7px 0;display:flex;flex-direction:column;gap:1px}
+.rl small{font-size:9px;color:#94A3B8;font-weight:400}
+.ftag{display:inline-block;font-size:8px;font-family:monospace;background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;border-radius:3px;padding:1px 4px;margin-top:2px;font-weight:600}
+.rv{text-align:right;font-size:12px;font-weight:600;color:#475569;padding-left:4px}
+.rp{text-align:right;font-size:10px;color:#94A3B8}
+.rn{text-align:right;font-size:9px;color:#CBD5E1;font-style:italic;line-height:1.3}
+.iw{display:flex;align-items:center;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:5px;overflow:hidden;width:100%}
+.iu{padding:0 4px 0 7px;font-size:10px;color:#94A3B8;white-space:nowrap;flex-shrink:0}
+.ni{border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:700;color:#1E293B;text-align:right;padding:7px 8px 7px 2px;width:100%;outline:none;-webkit-appearance:none}
+.ni::-webkit-inner-spin-button,.ni::-webkit-outer-spin-button{-webkit-appearance:none}
+.ni.pct{color:#2563EB}
+.row-sub{background:#F8FAFC;min-height:38px}
+.row-sub .rl{padding-left:10px;font-size:11px;color:#64748B}
+.row-sub .ri{font-size:9px;color:#E2E8F0}
+.sdot::before{content:'└';font-size:9px;color:#CBD5E1}
+.row-st{background:#F8FAFC;border-top:2px solid #E2E8F0 !important}
+.row-st .rl{font-weight:700;color:#1E293B}
+.row-st .rv{font-weight:700;color:#1E293B;font-size:13px}
+.row-gr{min-height:54px;border-top:3px solid #CBD5E1 !important}
+.row-gr.pos{background:linear-gradient(135deg,#F0FDF4,#DCFCE7)}
+.row-gr.neg{background:linear-gradient(135deg,#FFF1F2,#FFE4E6)}
+.row-gr .rl{font-size:14px;font-weight:800}
+.row-gr.pos .rl,.row-gr.pos .rv{color:#16A34A}
+.row-gr.neg .rl,.row-gr.neg .rv{color:#DC2626}
+.row-gr .rv{font-size:17px;font-weight:800}
+.row-or{min-height:54px;border-top:3px solid #CBD5E1 !important}
+.row-or.pos{background:linear-gradient(135deg,#FFF7ED,#FFEDD5)}
+.row-or.neg{background:linear-gradient(135deg,#FFF1F2,#FFE4E6)}
+.row-or .rl{font-size:14px;font-weight:800}
+.row-or.pos .rl,.row-or.pos .rv{color:#C2410C}
+.row-or.neg .rl,.row-or.neg .rv{color:#DC2626}
+.row-or .rv{font-size:17px;font-weight:800}
+/* 실수령 카드 */
+.row-net{min-height:60px;border-top:3px solid #16A34A !important;background:linear-gradient(135deg,#052e16,#14532d)}
+.row-net .rl{font-size:15px;font-weight:800;color:#4ade80}
+.row-net .rv{font-size:20px;font-weight:800;color:#4ade80}
+.row-net .rp{color:rgba(74,222,128,.6)}
+.row-net .rn{color:rgba(74,222,128,.4)}
+/* 채널 CM 카드 */
+.cm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid #F1F5F9}
+.cm-item{padding:14px 16px;border-right:1px solid #F1F5F9;text-align:center}
+.cm-item:last-child{border-right:none}
+.cm-ch{font-size:10px;font-weight:700;color:#64748B;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:5px}
+.cm-rate{font-size:22px;font-weight:800}
+.cm-rate.high{color:#16A34A}.cm-rate.mid{color:#2563EB}.cm-rate.low{color:#DC2626}
+.cm-sub{font-size:9px;color:#94A3B8;margin-top:3px}
+.cm-bar{height:5px;background:#E2E8F0;border-radius:3px;margin-top:8px;overflow:hidden}
+.cm-bar-fill{height:100%;border-radius:3px;transition:width .4s}
+/* BEP 카드 */
+.bep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.bep-item{padding:16px 14px;border-right:1px solid #F1F5F9;text-align:center}
+.bep-item:last-child{border-right:none}
+.bep-lbl{font-size:9px;font-weight:700;color:#94A3B8;letter-spacing:.5px;margin-bottom:5px}
+.bep-val{font-size:18px;font-weight:800;color:#D97706}
+.bep-unit{font-size:9px;color:#94A3B8;margin-top:2px}
+/* 투자회수 */
+.inv-grid{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #F1F5F9}
+.inv-card{padding:16px 18px;border-right:1px solid #F1F5F9}
+.inv-card:last-child{border-right:none}
+.inv-lbl{font-size:10px;font-weight:700;color:#94A3B8;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.inv-dot{width:6px;height:6px;border-radius:50%;background:#D97706;flex-shrink:0}
+.inv-foot{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#FFFBEB}
+.inv-foot-lbl{font-size:12px;font-weight:700;color:#D97706}
+.inv-foot-val{font-size:19px;font-weight:800;color:#D97706}
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.rec-item{padding:18px;text-align:center;border-right:1px solid rgba(255,255,255,0.08)}
+.rec-item:last-child{border-right:none}
+.rec-lbl{font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:.5px;margin-bottom:4px}
+.rec-val{font-size:20px;font-weight:800;color:white}
+.rec-unit{font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px}
+/* 절세팁 */
+.tip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.tip-item{padding:16px 18px;border-right:1px solid #F1F5F9;border-bottom:1px solid #F1F5F9}
+.tip-item:nth-child(2n){border-right:none}
+.tip-item:nth-last-child(-n+2){border-bottom:none}
+.tip-icon{font-size:20px;margin-bottom:6px}
+.tip-title{font-size:11px;font-weight:700;color:#1E293B;margin-bottom:3px}
+.tip-desc{font-size:10px;color:#64748B;line-height:1.5}
+.tip-save{font-size:11px;font-weight:700;color:#16A34A;margin-top:5px}
+/* VAT 섹션 강조 */
+.vat-note{padding:10px 18px;background:#FFF7ED;font-size:10px;color:#B45309;border-top:1px solid #FDE68A;line-height:1.5}
+/* 리스크 */
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.risk-item{padding:16px;border-right:1px solid rgba(255,255,255,0.08)}
+.risk-item:last-child{border-right:none}
+.risk-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-bottom:6px}
+.risk-title{font-size:11px;font-weight:700;color:white;margin-bottom:4px}
+.risk-desc{font-size:9px;color:rgba(255,255,255,0.55);line-height:1.5}
+@media(max-width:700px){
+  .hd{padding:16px 12px 0}
+  .wrap{padding:12px 8px;gap:11px}
+  .tbl-head,.row{grid-template-columns:14px 1fr 118px 60px 78px;padding:0 10px}
+  .tbl-head{padding:5px 10px}
+  .kpi{flex:none;width:33.333%}
+  .kpi:nth-child(4),.kpi:nth-child(5){display:none}
+  .cm-grid,.bep-grid{grid-template-columns:1fr 1fr}
+  .inv-grid{grid-template-columns:1fr}
+  .inv-card{border-right:none;border-bottom:1px solid #F1F5F9}
+  .rec-grid{grid-template-columns:1fr}
+  .rec-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .tip-grid,.risk-grid{grid-template-columns:1fr}
+  .tip-item:nth-child(2n){border-right:none}
+  .risk-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}
+}
+@media(max-width:480px){
+  .tbl-head,.row{grid-template-columns:12px 1fr 100px 52px 65px;padding:0 7px}
+  .kpi{width:50%}.kpi:nth-child(3){display:none}
+}
+
+/* ── RESPONSIVE TABLET (600~900px) ── */
+@media(max-width:900px){
+  .wrap{padding:14px 10px;gap:12px}
+  .kpi{flex:none;width:33.333%}
+  .kpi:nth-child(4),.kpi:nth-child(5){display:none}
+  .cm-grid,.bep-grid{grid-template-columns:1fr 1fr}
+  .inv-grid,.rec-grid,.tip-grid,.risk-grid{grid-template-columns:1fr}
+  .inv-card,.rec-item{border-right:none;border-bottom:1px solid #F1F5F9}
+}
+/* ── RESPONSIVE MOBILE (≤599px) ── */
+@media(max-width:599px){
+  .hd{padding:12px 12px 0}
+  .brand-icon{width:36px;height:36px;font-size:18px}
+  .brand-name{font-size:15px;letter-spacing:2px}
+  .brand-sub{font-size:8px}
+  .hd-btns{gap:4px}
+  .btn{padding:5px 8px;font-size:10px}
+  .scen-bar{gap:4px;padding-bottom:10px;flex-wrap:wrap}
+  .btn-scen{font-size:9px;padding:4px 7px}
+  .kpi{flex:none;width:50%}
+  .kpi:nth-child(3),.kpi:nth-child(4),.kpi:nth-child(5){display:none}
+  .kpi-val{font-size:14px}
+  .kpi-lbl{font-size:8px}
+  .wrap{padding:8px 6px;gap:10px}
+  .card{border-radius:10px;overflow:hidden}
+  .sec-hd{padding:8px 10px}
+  .sec-title{font-size:11px;gap:6px}
+  .sec-info{font-size:9px}
+  /* 테이블 가로 스크롤 */
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl-head,.row{grid-template-columns:10px 1fr 105px 62px 80px;padding:0 8px;min-width:340px}
+  .tbl-head{padding:5px 8px}
+  .rl{font-size:11px}
+  .rl small{font-size:8px}
+  .rv{font-size:11px}
+  .ri{font-size:8px}
+  .row-gr .rv{font-size:14px}
+  .ni{font-size:11px;padding:6px 6px}
+  .cm-grid,.bep-grid{grid-template-columns:1fr}
+  .inv-grid,.rec-grid,.tip-grid,.risk-grid{grid-template-columns:1fr}
+  .inv-card,.rec-item,.tip-item,.risk-item{border-right:none !important;border-bottom:1px solid #F1F5F9 !important}
+}
+
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hd-top">
+    <div class="brand">
+      <div class="brand-icon">&#x1FA9D;</div>
+      <div>
+        <div class="brand-name">HOOKED</div>
+        <div class="brand-sub">훅트포케 삼성역 3번출구 | 월간 손익계산서</div>
+      </div>
+    </div>
+    <div class="hd-btns">
+      <button class="btn btn-ghost" onclick="doReset()">&#x21BA; 초기화</button>
+      <button class="btn btn-brand" onclick="doCSV()">&#x2193; CSV</button>
+    </div>
+  </div>
+  <div class="scen-bar">
+    <span class="scen-lbl">PRESET ▶</span>
+    <button class="btn btn-scen s-red" onclick="loadScen('보수')">🔴 보수 (주중 50 / 토 25명)</button>
+    <button class="btn btn-scen s-yel" onclick="loadScen('기본')">🟡 기본 (주중 130 / 토 70명)</button>
+    <button class="btn btn-scen s-grn" onclick="loadScen('낙관')">🟢 낙관 (주중 185 / 토 100명)</button>
+  </div>
+  <div class="kpi-bar">
+    <div class="kpi"><div class="kpi-lbl">총 매출</div><div class="kpi-val" id="k-rev">-</div><div class="kpi-sub">VAT 포함</div></div>
+    <div class="kpi"><div class="kpi-lbl">영업이익</div><div class="kpi-val" id="k-op">-</div><div class="kpi-sub" id="k-op-sub">-</div></div>
+    <div class="kpi"><div class="kpi-lbl">영업이익률</div><div class="kpi-val" id="k-margin">-</div><div class="kpi-sub">총매출 기준</div></div>
+    <div class="kpi"><div class="kpi-lbl">사장 실수령</div><div class="kpi-val" id="k-net">-</div><div class="kpi-sub">세후 월 순이익</div></div>
+    <div class="kpi"><div class="kpi-lbl">투자회수기간</div><div class="kpi-val" id="k-payback">-</div><div class="kpi-sub">실질투자 OCF 기준</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ① 매출 구성 (3채널 × 주중/주말) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#3B82F6"></div>① 매출 구성 — 3채널 × 주중/주말</div>
+    <div class="sec-info">노란 셀 직접 입력 | 주말 = 주중 30% 기본 설정</div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액 / 입력값</span><span class="th r">매출 비중</span><span class="th r">산식 / 비고</span>
+  </div>
+
+  <!-- 홀 -->
+  <div class="row" style="background:#F0FDF4;border-left:3px solid #16A34A">
+    <div class="ri" style="color:#16A34A">▶</div>
+    <div class="rl" style="font-weight:700;color:#15803D"><span>🍽️ 홀 매출</span></div>
+    <div class="rv" id="v-hall-rev" style="color:#15803D">-</div>
+    <div class="rp" id="p-hall-rev" style="color:#16A34A">-</div>
+    <div class="rn" style="color:#86EFAC">주중+주말 합산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>홀 객단가</span><small>방문 고객 평균 결제액 (VAT포함)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-price" type="text" inputmode="numeric" value="13,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-price">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub" style="background:#F0FDF4">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>📅 주중 홀 일 객수</span><small>월~금 하루 평균 방문 고객</small></div>
+    <div><div class="iw"><span class="iu">명</span><input class="ni" id="i-count-wd" type="text" inputmode="numeric" value="80" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-count-wd">-</div>
+    <div class="rn" id="rn-hall-wd">주중 소계</div>
+  </div>
+  <div class="row row-sub" style="background:#FFF0E0">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🗓️ 토요일 홀 일 객수</span><small>토요일 하루 평균 방문 고객 (주중 50%)</small></div>
+    <div><div class="iw"><span class="iu">명</span><input class="ni" id="i-count-we" type="text" inputmode="numeric" value="40" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-count-we">-</div>
+    <div class="rn" id="rn-hall-we">주말 소계</div>
+  </div>
+
+  <!-- 포장 -->
+  <div class="row" style="background:#F0F9FF;border-left:3px solid #0EA5E9">
+    <div class="ri" style="color:#0EA5E9">▶</div>
+    <div class="rl" style="font-weight:700;color:#0369A1"><span>📦 포장 매출</span></div>
+    <div class="rv" id="v-wrap-rev" style="color:#0369A1">-</div>
+    <div class="rp" id="p-wrap-rev" style="color:#0EA5E9">-</div>
+    <div class="rn" style="color:#7DD3FC">주중+주말 합산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>포장 객단가</span><small>테이크아웃 평균 결제액 (VAT포함)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wrap-price" type="text" inputmode="numeric" value="13,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-wrap-price">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub" style="background:#F0F9FF">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>📅 주중 포장 일 건수</span><small>월~금 하루 평균 포장 주문</small></div>
+    <div><div class="iw"><span class="iu">건</span><input class="ni" id="i-wrap-count-wd" type="text" inputmode="numeric" value="20" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-wrap-count-wd">-</div>
+    <div class="rn" id="rn-wrap-wd">주중 소계</div>
+  </div>
+  <div class="row row-sub" style="background:#FFF0E0">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🗓️ 토요일 포장 일 건수</span><small>토요일 하루 평균 포장 주문 (주중 50%)</small></div>
+    <div><div class="iw"><span class="iu">건</span><input class="ni" id="i-wrap-count-we" type="text" inputmode="numeric" value="10" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-wrap-count-we">-</div>
+    <div class="rn" id="rn-wrap-we">주말 소계</div>
+  </div>
+
+  <!-- 배달 -->
+  <div class="row" style="background:#FFF7ED;border-left:3px solid #F59E0B">
+    <div class="ri" style="color:#F59E0B">▶</div>
+    <div class="rl" style="font-weight:700;color:#B45309"><span>🛵 배달 매출</span></div>
+    <div class="rv" id="v-del-rev" style="color:#B45309">-</div>
+    <div class="rp" id="p-del-rev" style="color:#F59E0B">-</div>
+    <div class="rn" style="color:#FCD34D">주중+주말 합산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>배달 객단가</span><small>배달 평균 결제액 (VAT포함, 최소주문 반영)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-del-price" type="text" inputmode="numeric" value="13,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-del-price">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub" style="background:#FFF7ED">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>📅 주중 배달 일 건수</span><small>월~금 하루 평균 배달 주문</small></div>
+    <div><div class="iw"><span class="iu">건</span><input class="ni" id="i-del-count-wd" type="text" inputmode="numeric" value="30" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-del-count-wd">-</div>
+    <div class="rn" id="rn-del-wd">주중 소계</div>
+  </div>
+  <div class="row row-sub" style="background:#FFF0E0">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🗓️ 토요일 배달 일 건수</span><small>토요일 하루 평균 배달 주문 (주중 65%)</small></div>
+    <div><div class="iw"><span class="iu">건</span><input class="ni" id="i-del-count-we" type="text" inputmode="numeric" value="20" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-del-count-we">-</div>
+    <div class="rn" id="rn-del-we">주말 소계</div>
+  </div>
+
+  <!-- 영업일 공통 -->
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>월 영업일</span><small>주 6일 영업 기준 · 일요 휴무 (26.1 = 365÷12×6/7)</small></div>
+    <div><div class="iw"><span class="iu">일</span><input class="ni" id="i-days" type="text" inputmode="decimal" value="26.1" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-days">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+
+  <!-- 주중/주말 소계 -->
+  <div class="row" style="background:#EFF6FF">
+    <div class="ri" style="color:#3B82F6">◆</div>
+    <div class="rl" style="color:#1D4ED8;font-weight:600"><span>📅 주중 매출 소계</span><span class="ftag" id="f-wd-rev-days">약 -일</span></div>
+    <div class="rv" id="v-rev-wd" style="color:#1D4ED8">-</div>
+    <div class="rp" id="p-rev-wd" style="color:#3B82F6">-</div>
+    <div class="rn">월~금 합산</div>
+  </div>
+  <div class="row" style="background:#FFF7ED">
+    <div class="ri" style="color:#F59E0B">◆</div>
+    <div class="rl" style="color:#92400E;font-weight:600"><span>🗓️ 토요일 매출 소계</span><span class="ftag" id="f-we-rev-days">약 -일</span></div>
+    <div class="rv" id="v-rev-we" style="color:#92400E">-</div>
+    <div class="rp" id="p-rev-we" style="color:#F59E0B">-</div>
+    <div class="rn">토·일 합산</div>
+  </div>
+
+  <!-- 총 합계 -->
+  <div class="row" style="background:#EFF6FF">
+    <div class="ri" style="color:#3B82F6">●</div>
+    <div class="rl" style="font-weight:700;color:#1E40AF"><span>총 월 매출</span><span class="ftag">홀+포장+배달 × 주중+주말</span></div>
+    <div class="rv" id="v-revenue" style="font-size:14px;font-weight:800;color:#1E40AF">-</div>
+    <div class="rp" id="p-revenue" style="color:#3B82F6;font-weight:600">100.0%</div>
+    <div class="rn" style="color:#93C5FD">VAT 포함</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>공급가액 (VAT 제외)</span><span class="ftag">매출 ÷ 1.1</span></div>
+    <div class="rv" id="v-net">-</div>
+    <div class="rp" id="p-net">-</div>
+    <div class="rn">세무상 매출기준</div>
+  </div>
+
+  <!-- 일판 (주중/주말 분리) -->
+  <div class="row" style="background:#F5F3FF;border-left:3px solid #7C3AED">
+    <div class="ri" style="color:#7C3AED">▶</div>
+    <div class="rl" style="font-weight:700;color:#5B21B6"><span>📊 일판 (채널별 하루 매출)</span><span class="ftag">주중/주말 구분</span></div>
+    <div class="rv" id="v-daily-total" style="font-size:14px;font-weight:800;color:#5B21B6">-</div>
+    <div class="rp" id="p-daily-total" style="color:#7C3AED;font-weight:600">평균 일판</div>
+    <div class="rn" style="color:#A78BFA">홀+포장+배달 합산</div>
+  </div>
+  <div class="row row-sub" style="background:#F0FDF4">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>📅 주중 일판</span><small>월~금 하루 합산 (홀+포장+배달)</small></div>
+    <div class="rv" id="v-daily-wd">-</div>
+    <div class="rp" id="p-daily-wd">-</div>
+    <div class="rn">주중 하루 매출</div>
+  </div>
+  <div class="row row-sub" style="background:#FFF0E0">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🗓️ 주말 일판</span><small>토·일 하루 합산 (홀+포장+배달)</small></div>
+    <div class="rv" id="v-daily-we">-</div>
+    <div class="rp" id="p-daily-we">-</div>
+    <div class="rn">주말 하루 매출</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🍽️ 홀 일판 (주중/주말)</span></div>
+    <div class="rv" id="v-hall-daily">-</div>
+    <div class="rp" id="p-hall-daily">-</div>
+    <div class="rn" id="rn-hall-daily">홀 하루 매출</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>📦 포장 일판 (주중/주말)</span></div>
+    <div class="rv" id="v-wrap-daily">-</div>
+    <div class="rp" id="p-wrap-daily">-</div>
+    <div class="rn" id="rn-wrap-daily">포장 하루 매출</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>🛵 배달 일판 (주중/주말)</span></div>
+    <div class="rv" id="v-del-daily">-</div>
+    <div class="rp" id="p-del-daily">-</div>
+    <div class="rn" id="rn-del-daily">배달 하루 매출</div>
+  </div>
+</div>
+<!-- ② 채널별 공헌이익률 (NEW) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#8B5CF6"></div>② 채널별 공헌이익률 (CM율)</div>
+    <div class="sec-info">홀 〉 포장 〉 배달 순서 (배달수수료 영향)</div>
+  </div>
+  <div class="cm-grid">
+    <div class="cm-item">
+      <div class="cm-ch">🍽️ 홀</div>
+      <div class="cm-rate high" id="cm-hall">-</div>
+      <div class="cm-sub">식재료 32% + 카드 1.5%</div>
+      <div class="cm-bar"><div class="cm-bar-fill" id="cmb-hall" style="background:#16A34A;width:0%"></div></div>
+    </div>
+    <div class="cm-item">
+      <div class="cm-ch">📦 포장</div>
+      <div class="cm-rate mid" id="cm-wrap">-</div>
+      <div class="cm-sub">식재료 32% + 포장재 + 카드 1.5%</div>
+      <div class="cm-bar"><div class="cm-bar-fill" id="cmb-wrap" style="background:#2563EB;width:0%"></div></div>
+    </div>
+    <div class="cm-item">
+      <div class="cm-ch">🛵 배달</div>
+      <div class="cm-rate low" id="cm-del">-</div>
+      <div class="cm-sub">식재료 32% + 배달수수료 15% + 카드 1.5%</div>
+      <div class="cm-bar"><div class="cm-bar-fill" id="cmb-del" style="background:#DC2626;width:0%"></div></div>
+    </div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액 / 입력값</span><span class="th r">매출 대비</span><span class="th r">산식 / 비고</span>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>식재료 원가율</span><small>전 채널 공통 (포케볼 업종 평균)</small></div>
+    <div><div class="iw"><span class="iu">매출의</span><input class="ni pct" id="i-cogs-rate" type="text" inputmode="decimal" value="32" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-cogs">-</div>
+    <div class="rn" id="v-cogs">-</div>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>카드 수수료율</span><small>전체 매출 기준 (연 매출 3억+ 구간)</small></div>
+    <div><div class="iw"><span class="iu">매출의</span><input class="ni pct" id="i-card-rate" type="text" inputmode="decimal" value="1.5" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-card">-</div>
+    <div class="rn" id="v-card">-</div>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>배달앱 수수료율</span><small>배달 채널 매출 대비 수수료</small></div>
+    <div><div class="iw"><span class="iu">배달의</span><input class="ni pct" id="i-app-fee-rate" type="text" inputmode="decimal" value="13" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-app-fee">-</div>
+    <div class="rn" id="v-app-fee">배달매출×15%</div>
+  </div>
+  <div class="row row-st">
+    <div class="ri">▶</div>
+    <div class="rl"><span>블렌디드 공헌이익</span><span class="ftag">총매출 − 식재료 − 포장재 − 배달수수료 − 카드수수료</span></div>
+    <div class="rv" id="v-cm-total">-</div>
+    <div class="rp" id="p-cm-total">-</div>
+    <div class="rn" id="v-cm-rate">CM율</div>
+  </div>
+</div>
+
+<!-- ③ 고정비 -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#EF4444"></div>③ 고정비 (Fixed Costs)</div>
+    <div class="sec-info" id="fix-lbl">소계: -</div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액 / 입력값</span><span class="th r">매출 대비</span><span class="th r">산식 / 비고</span>
+  </div>
+
+  <!-- 임대료 -->
+  <div class="row" style="background:#FFF1F2">
+    <div class="ri" style="color:#EF4444">▶</div>
+    <div class="rl" style="font-weight:700;color:#B91C1C"><span>🏢 임대료</span></div>
+    <div class="rv" id="v-rent-total" style="color:#B91C1C">-</div>
+    <div class="rp" id="p-rent-total">-</div>
+    <div class="rn">임대료+관리비</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>순수 임대료</span><small>삼성역 3번출구 오피스 상권 13평</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-rent" type="text" inputmode="numeric" value="3,450,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-rent">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>관리비</span><small>공용부분 관리비 (별도)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-mgmt" type="text" inputmode="numeric" value="400,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-mgmt">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+
+  <!-- 인건비 (주중3명+주말2명) -->
+  <div class="row" style="background:#FFF1F2">
+    <div class="ri" style="color:#EF4444">▶</div>
+    <div class="rl" style="font-weight:700;color:#B91C1C"><span>👷 인건비 (주휴수당 + 4대보험 포함)</span></div>
+    <div class="rv" id="v-labor-total" style="color:#B91C1C">-</div>
+    <div class="rp" id="p-labor-total">-</div>
+    <div class="rn">주중 3명 + 주말 2명</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>시급</span><small>2025년 최저임금 기준</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage" type="text" inputmode="numeric" value="10,030" oninput="recalc()" onblur="fmtC(this);recalc()"><span class="iu">/시</span></div></div>
+    <div class="rp" id="p-wage">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>월 영업 주수</span><small>주휴수당 산정 기준 (30.4일 ÷ 7 ≈ 4.3주)</small></div>
+    <div><div class="iw"><span class="iu">주</span><input class="ni" id="i-weeks" type="text" inputmode="decimal" value="4.3" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp" id="p-wd-days">-</div>
+    <div class="rn" id="v-wd-days">주중 약 -일 / 주말 약 -일</div>
+  </div>
+
+  <!-- ── 풀타임 정직원 ── -->
+  <div class="row row-sub" style="background:#EFF6FF">
+    <div class="ri" style="color:#2563EB;font-size:9px">정직원</div>
+    <div class="rl" style="color:#1D4ED8;font-weight:600"><span>👔 풀타임 직원 (월~금)</span><small>09:00~14:30 · 5.5h · 수습 3개월</small></div>
+    <div class="rv" id="v-ft-total" style="color:#1D4ED8">-</div>
+    <div class="rp"></div><div class="rn">급여 + 4대보험</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>정직원 월급</span><small>세전 고정급 (주휴 포함)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-ft-salary" type="text" inputmode="numeric" value="2,750,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-ft-salary">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>수습 지급률</span><small>3개월 수습 · 최저임금 이상 확인됨</small></div>
+    <div><div class="iw"><input class="ni pct" id="i-ft-prob" type="text" inputmode="decimal" value="90" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-ft-prob">-</div>
+    <div class="rn">수습기간 90% 지급</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>정직원 실지급액</span><span class="ftag">월급 × 수습률%</span></div>
+    <div class="rv" id="v-ft-pay">-</div><div class="rp"></div><div class="rn">자동 계산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>정직원 4대보험 사업주부담</span><span class="ftag">실지급 × 10.5%</span></div>
+    <div><div class="iw"><span class="iu">부담률</span><input class="ni pct" id="i-emp-ins" type="text" inputmode="decimal" value="10.5" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-emp-ins">-</div>
+    <div class="rn" id="v-ft-ins-note">정직원만 해당</div>
+  </div>
+
+  <!-- 브레이크 타임 -->
+  <div class="row row-sub" style="background:#F1F5F9;border-left:3px dashed #CBD5E1">
+    <div class="ri" style="color:#94A3B8;font-size:9px">휴무</div>
+    <div class="rl" style="color:#64748B;font-style:italic"><span>🔒 브레이크 타임</span><small>영업 중단 · 직원 휴식</small></div>
+    <div class="rv" style="color:#94A3B8;font-size:11px">14:30~17:00</div>
+    <div class="rp"></div><div class="rn">2.5시간 · 비용 없음</div>
+  </div>
+
+  <!-- ── 아르바이트1 (월~목) ── -->
+  <div class="row row-sub" style="background:#FFF8F8">
+    <div class="ri" style="color:#EF4444;font-size:9px">알바1</div>
+    <div class="rl" style="color:#B91C1C;font-weight:600"><span>📅 알바1 (월~목)</span><small>09:30~13:00 · 주 14h → 주휴수당 없음</small></div>
+    <div class="rv" id="v-ha1-base" style="color:#B91C1C">-</div>
+    <div class="rp"></div><div class="rn">주 4일 · 4대보험 없음</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>알바1 1일 근무시간</span><small>09:30~13:00</small></div>
+    <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha1-h" type="text" inputmode="decimal" value="3.5" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp"></div>
+    <div class="rn">주 14h → 주휴 없음</div>
+  </div>
+
+  <!-- ── 아르바이트2 (금토일) ── -->
+  <div class="row row-sub" style="background:#FFF7ED">
+    <div class="ri" style="color:#F59E0B;font-size:9px">알바2</div>
+    <div class="rl" style="color:#B45309;font-weight:600"><span>📅 알바2 (금토일)</span><small>09:30~13:00 · 주 10.5h → 주휴수당 없음</small></div>
+    <div class="rv" id="v-ha2-base" style="color:#B45309">-</div>
+    <div class="rp"></div><div class="rn">주 3일 · 4대보험 없음</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>알바2 1일 근무시간</span><small>09:30~13:00</small></div>
+    <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha2-h" type="text" inputmode="decimal" value="3.5" oninput="recalc()" onblur="recalc()"></div></div>
+    <div class="rp"></div>
+    <div class="rn">주 10.5h → 주휴 없음</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>알바 시급</span><small>2025년 최저임금</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage" type="text" inputmode="numeric" value="10,030" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-wage">-</div>
+    <div class="rn">알바1·2 공통</div>
+  </div>
+
+  <!-- 기타 고정비 -->
+  <div class="row" style="background:#FFF1F2">
+    <div class="ri" style="color:#EF4444">▶</div>
+    <div class="rl" style="font-weight:700;color:#B91C1C"><span>📋 기타 고정비</span></div>
+    <div class="rv" id="v-etc-total" style="color:#B91C1C">-</div>
+    <div class="rp" id="p-etc-total">-</div>
+    <div class="rn">고정비 소계</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>전기/가스/수도</span><small>하계 에어컨 가동 포함</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-util" type="text" inputmode="numeric" value="250,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-util">-</div><div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>통신/인터넷</span><small>사업용 인터넷</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-comm" type="text" inputmode="numeric" value="50,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-comm">-</div><div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>배달앱 월정액</span><small>배민1플러스+쿠팡이츠 정액</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-app-fixed" type="text" inputmode="numeric" value="88,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-app-fixed">-</div><div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>소모품/위생용품</span><small>장갑·비닐백·세제 등</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-misc" type="text" inputmode="numeric" value="100,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-misc">-</div><div class="rn">직접 입력</div>
+  </div>
+
+  <!-- 감가상각·상각비 -->
+  <div class="row" style="background:#F5F3FF;border-left:3px solid #7C3AED">
+    <div class="ri" style="color:#7C3AED">▶</div>
+    <div class="rl" style="font-weight:700;color:#5B21B6"><span>📉 감가상각 · 상각비</span></div>
+    <div class="rv" id="v-dep-total" style="color:#5B21B6">-</div>
+    <div class="rp" id="p-dep-total">-</div>
+    <div class="rn">비현금 비용 (세금 절감 효과)</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>주방집기 감가상각</span><span class="ftag">주방집기 ÷ 48개월</span></div>
+    <div class="rv" id="v-dep-equip">-</div><div class="rp" id="p-dep-equip">-</div><div class="rn">자동 계산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>인테리어 감가상각</span><span class="ftag">인테리어 ÷ 48개월</span></div>
+    <div class="rv" id="v-dep-int">-</div><div class="rp" id="p-dep-int">-</div><div class="rn">자동 계산</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>권리금 상각</span><span class="ftag">권리금 × (1-회수율%) ÷ 48개월</span></div>
+    <div class="rv" id="v-dep-key">-</div><div class="rp" id="p-dep-key">-</div><div class="rn">4년 균등 상각</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>보증금 기회비용</span><span class="ftag">보증금 × 3% ÷ 12</span></div>
+    <div class="rv" id="v-dep-dep">-</div><div class="rp" id="p-dep-dep">-</div><div class="rn">묶인 자금 기회비용</div>
+  </div>
+
+  <!-- 로열티 -->
+  <div class="row" style="background:#FFF7ED">
+    <div class="ri" style="color:#F59E0B">◆</div>
+    <div class="rl" style="font-weight:700;color:#B45309"><span>🏷️ 훅트포케 로열티</span><span class="ftag" id="f-royalty">매출 × 3%</span></div>
+    <div><div class="iw"><span class="iu">매출의</span><input class="ni pct" id="i-royalty" type="text" inputmode="decimal" value="3" oninput="recalc()" onblur="recalc()" style="max-width:50px"><span class="iu">%</span></div></div>
+    <div class="rp" id="p-royalty">-</div>
+    <div class="rn" id="v-royalty">준변동비</div>
+  </div>
+
+  <div class="row row-st">
+    <div class="ri">▶</div>
+    <div class="rl"><span>고정비+감가상각+로열티 합계</span></div>
+    <div class="rv" id="v-fix-total">-</div>
+    <div class="rp" id="p-fix-total">-</div>
+    <div class="rn"></div>
+  </div>
+</div>
+
+<!-- 영업이익 -->
+<div class="card">
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">결과</span>
+    <span class="th r">금액</span><span class="th r">매출 대비</span><span class="th r">산식</span>
+  </div>
+  <div class="row row-gr pos" id="op-row">
+    <div class="ri" style="font-size:15px">★</div>
+    <div class="rl">
+      <span id="op-label">④ 영업이익</span>
+      <span class="ftag">공헌이익 − 고정비 − 감가상각 − 로열티</span>
+    </div>
+    <div class="rv" id="v-op">-</div>
+    <div class="rp" id="p-op">-</div>
+    <div class="rn"></div>
+  </div>
+</div>
+
+<!-- ⑤ VAT 납부 (NEW) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#F59E0B"></div>⑤ 부가가치세 (VAT) 납부 — 일반과세자</div>
+    <div class="sec-info">분기별 예정/확정 신고 교대</div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액</span><span class="th r">매출 대비</span><span class="th r">산식 / 비고</span>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>매출세액</span><span class="ftag">공급가액 × 10%</span></div>
+    <div class="rv" id="v-vat-out">-</div>
+    <div class="rp" id="p-vat-out">-</div>
+    <div class="rn">매출÷1.1×10%</div>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>(−) 매입세액 추정</span><small>임대료·포장재 등 과세구매 (농산물 면세 → 매입세액 낮음)</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-vat-in" type="text" inputmode="numeric" value="400,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-vat-in">-</div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-st">
+    <div class="ri">▶</div>
+    <div class="rl"><span>실납부 VAT (월)</span><span class="ftag">매출세액 − 매입세액</span></div>
+    <div class="rv" id="v-vat-pay">-</div>
+    <div class="rp" id="p-vat-pay">-</div>
+    <div class="rn" id="v-vat-qtr">분기 납부액</div>
+  </div>
+  <div class="vat-note">⚠️ 음식업 특성상 식재료 대부분이 면세 농산물 → 매입세액 공제 낮아 실납부 VAT 높음 | 분기 예정신고(1·4·7·10월) + 확정신고(1·7월) | 연 매출 3억+ → <strong>성실신고 의무</strong> (신고기한 6월 30일)</div>
+</div>
+
+<!-- ⑥ 사장 4대보험 (확장) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#6366F1"></div>⑥ 사장 4대보험 — 지역가입자</div>
+    <div class="sec-info">국민연금 9% · 건강보험 7.09% 전액 본인 부담</div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액</span><span class="th r">매출 대비</span><span class="th r">산식 / 비고</span>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>월 실질 사업소득</span><span class="ftag">영업이익 − 실납부 VAT</span></div>
+    <div class="rv" id="v-real-income">-</div>
+    <div class="rp" id="p-real-income">-</div>
+    <div class="rn">보험료 산정 기준</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>국민연금</span><span class="ftag">월소득 × 9% (상한 590만원)</span></div>
+    <div class="rv" id="v-pension">-</div>
+    <div class="rp" id="p-pension">-</div>
+    <div class="rn">직장 4.5%+4.5% → 지역 9% 전액</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>건강보험료</span><span class="ftag">월소득 × 7.09%</span></div>
+    <div class="rv" id="v-health">-</div>
+    <div class="rp" id="p-health">-</div>
+    <div class="rn">직장 3.545%+3.545% → 지역 7.09%</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>장기요양보험</span><span class="ftag">건강보험료 × 12.95%</span></div>
+    <div class="rv" id="v-ltcare">-</div>
+    <div class="rp" id="p-ltcare">-</div>
+    <div class="rn">건강보험료의 12.95%</div>
+  </div>
+  <div class="row row-st">
+    <div class="ri">▶</div>
+    <div class="rl"><span>사장 4대보험 소계 (월)</span></div>
+    <div class="rv" id="v-ins-total">-</div>
+    <div class="rp" id="p-ins-total">-</div>
+    <div class="rn"></div>
+  </div>
+</div>
+
+<!-- ⑦ 종합소득세 -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#EF4444"></div>⑦ 종합소득세 — 개인사업자 누진세율</div>
+    <div class="sec-info">중소기업 특별세액감면 10% 자동 적용</div>
+  </div>
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">항목</span>
+    <span class="th r">금액</span><span class="th r">비율</span><span class="th r">산식 / 비고</span>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>연 사업소득</span><span class="ftag">월 실질소득 × 12</span></div>
+    <div class="rv" id="v-annual">-</div>
+    <div class="rp">-</div>
+    <div class="rn">과세표준 기준</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>(−) 국민연금 소득공제</span><small>연금보험료공제 (소득세법 §51의3)</small></div>
+    <div class="rv" id="v-pen-ded">-</div>
+    <div class="rp"></div>
+    <div class="rn">국민연금×12</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>(−) 기본공제 (본인)</span></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-basic-ded" type="text" inputmode="numeric" value="1,500,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp"></div>
+    <div class="rn">직접 입력</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>(−) 노란우산공제</span><small>★ 강력 추천 — 월 최대 100만, 연 최대 1,200만 소득공제</small></div>
+    <div><div class="iw"><span class="iu">₩/연</span><input class="ni" id="i-yellow" type="text" inputmode="numeric" value="12,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp"></div>
+    <div class="rn" id="v-yellow-save">최대 연 1,200만</div>
+  </div>
+  <div class="row">
+    <div class="ri">◆</div>
+    <div class="rl"><span>과세표준</span><span class="ftag">연소득 − 국민연금 − 기본공제 − 노란우산</span></div>
+    <div class="rv" id="v-taxbase">-</div>
+    <div class="rp" id="v-bracket">-</div>
+    <div class="rn">누진 세율 구간</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>산출세액</span><span class="ftag">누진세율 적용</span></div>
+    <div class="rv" id="v-tax-calc">-</div>
+    <div class="rp"></div>
+    <div class="rn" id="v-tax-rate">-</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>(−) 중소기업 특별세액감면</span><span class="ftag">산출세액 × 10%</span></div>
+    <div class="rv" id="v-sme-reduce">-</div>
+    <div class="rp"></div>
+    <div class="rn">조특법 §7 음식업 수도권 10%</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>결정세액</span></div>
+    <div class="rv" id="v-final-tax">-</div>
+    <div class="rp"></div>
+    <div class="rn">감면 적용 후</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>지방소득세 (×10%)</span></div>
+    <div class="rv" id="v-local-tax">-</div>
+    <div class="rp" id="p-local-tax">-</div>
+    <div class="rn">지방세법 §103의3</div>
+  </div>
+  <div class="row row-st">
+    <div class="ri">▶</div>
+    <div class="rl"><span>월 세금 합계 (종소세+지방세)</span><span class="ftag">연세금 ÷ 12</span></div>
+    <div class="rv" id="v-tax-total">-</div>
+    <div class="rp" id="p-tax-total">-</div>
+    <div class="rn">연납 기준 월 적립액</div>
+  </div>
+</div>
+
+<!-- 실수령 순이익 (NEW 강조 카드) -->
+<div class="card">
+  <div class="tbl-head">
+    <span class="th"></span><span class="th">결과</span>
+    <span class="th r">금액</span><span class="th r">부담율</span><span class="th r">산식</span>
+  </div>
+  <div class="row" style="background:#FFF7ED;border-top:1px solid #FDE68A">
+    <div class="ri" style="color:#D97706">◆</div>
+    <div class="rl"><span style="font-weight:600;color:#92400E">세금·보험 총부담</span><span class="ftag">VAT+국민연금+건강보험+종소세</span></div>
+    <div class="rv" id="v-burden-total" style="color:#B45309">-</div>
+    <div class="rp" id="p-burden-total" style="color:#D97706">-</div>
+    <div class="rn">vs 영업이익</div>
+  </div>
+  <div class="row row-net" id="net-row">
+    <div class="ri" style="font-size:18px;color:#4ade80">💰</div>
+    <div class="rl">
+      <span>⑧ 사장 월 실수령 순이익</span>
+      <span style="font-size:9px;color:rgba(74,222,128,.6);margin-top:2px">영업이익 − VAT − 국민연금 − 건강보험 − 종소세</span>
+    </div>
+    <div class="rv" id="v-net-income">-</div>
+    <div class="rp" id="p-net-income">-</div>
+    <div class="rn" id="rn-net">연 환산: -</div>
+  </div>
+</div>
+
+<!-- ⑨ BEP 손익분기점 (NEW) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#D97706"></div>⑨ 손익분기점 (BEP) 분석</div>
+    <div class="sec-info">몇 명부터 흑자인가</div>
+  </div>
+  <div class="bep-grid">
+    <div class="bep-item">
+      <div class="bep-lbl">월 BEP 매출</div>
+      <div class="bep-val" id="bep-rev">-</div>
+      <div class="bep-unit">원/월</div>
+    </div>
+    <div class="bep-item">
+      <div class="bep-lbl">일 BEP 매출</div>
+      <div class="bep-val" id="bep-daily">-</div>
+      <div class="bep-unit">원/일</div>
+    </div>
+    <div class="bep-item">
+      <div class="bep-lbl">BEP 최소 객수</div>
+      <div class="bep-val" id="bep-count">-</div>
+      <div class="bep-unit">명/일 (홀+포장+배달 합산)</div>
+    </div>
+    <div class="bep-item">
+      <div class="bep-lbl">현재 BEP 달성도</div>
+      <div class="bep-val" id="bep-ratio" style="color:#16A34A">-</div>
+      <div class="bep-unit">현재매출 ÷ BEP매출</div>
+    </div>
+  </div>
+  <div class="tbl-head" style="margin-top:0">
+    <span class="th"></span><span class="th">BEP 산출 내역</span>
+    <span class="th r">금액</span><span class="th r">비율</span><span class="th r">비고</span>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>순수 고정비 (BEP 분자)</span><span class="ftag">임대료+인건비+기타</span></div>
+    <div class="rv" id="bep-fixed">-</div><div class="rp"></div><div class="rn">로열티 제외</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>실질 CM율 (BEP 분모)</span><span class="ftag">블렌디드CM − 로열티율</span></div>
+    <div class="rv" id="bep-cm">-</div><div class="rp"></div><div class="rn">로열티 차감 후</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>현재 일 총 객수</span><small>홀+포장+배달 합계</small></div>
+    <div class="rv" id="bep-curr-count">-</div><div class="rp"></div><div class="rn">명/건</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>BEP 이후 여유 객수</span><small>현재 − BEP 최소</small></div>
+    <div class="rv" id="bep-margin-count">-</div><div class="rp"></div><div class="rn">여유 마진</div>
+  </div>
+</div>
+
+<!-- ⑩ 초기투자비 -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#F59E0B"></div>⑩ 초기 투자비</div>
+    <div class="sec-info">투자회수기간 산정 기준</div>
+  </div>
+  <div class="inv-grid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="inv-card">
+      <div class="inv-lbl"><span class="inv-dot" style="background:#EF4444"></span>주방집기 (본사 공급)</div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-equip" type="text" inputmode="numeric" value="13,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 월 상각 <span id="v-equip-dep" style="color:#475569;font-weight:600">-</span> / 48개월</div>
+    </div>
+    <div class="inv-card">
+      <div class="inv-lbl"><span class="inv-dot" style="background:#F59E0B"></span>인테리어 (추정)</div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-interior" type="text" inputmode="numeric" value="70,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 월 상각 <span id="v-int-dep" style="color:#475569;font-weight:600">-</span> / 48개월</div>
+    </div>
+    <div class="inv-card">
+      <div class="inv-lbl"><span class="inv-dot" style="background:#8B5CF6"></span>권리금</div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-key" type="text" inputmode="numeric" value="50,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:4px;display:flex;align-items:center;gap:4px">
+        예상 회수율
+        <div class="iw" style="display:inline-flex;width:auto;padding:0">
+          <input class="ni pct" id="i-key-recovery" type="text" inputmode="decimal" value="50" oninput="recalc()" onblur="recalc()" style="max-width:36px;font-size:10px;padding:3px 4px">
+          <span class="iu">%</span>
+        </div>
+      </div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:3px">→ 실상각 <span id="v-key-dep" style="color:#8B5CF6;font-weight:600">-</span> / 48개월 · 회수분 제외</div>
+    </div>
+    <div class="inv-card">
+      <div class="inv-lbl"><span class="inv-dot" style="background:#3B82F6"></span>임대 보증금</div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-deposit" type="text" inputmode="numeric" value="70,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 퇴거 시 반환 | 기회비용 <span id="v-dep-opp" style="color:#475569;font-weight:600">-</span>/월</div>
+    </div>
+  </div>
+  <div class="inv-foot">
+    <div class="inv-foot-lbl">📊 총 초기 투자금액</div>
+    <div class="inv-foot-val" id="v-total-inv">-</div>
+  </div>
+</div>
+
+<!-- 투자회수 분석 -->
+<div class="card" style="background:#1C2B3A;overflow:hidden">
+  <div class="sec-hd" style="background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08)">
+    <div class="sec-title" style="color:white">
+      <div class="sec-dot" style="background:#FF6B35"></div>⑪ 실질 투자회수 분석
+    </div>
+    <div class="sec-info" style="color:rgba(255,255,255,0.35)">운영현금흐름(OCF) 기준 · 보증금·회수권리금 제외</div>
+  </div>
+
+  <!-- 투자금 산정 내역 -->
+  <div style="padding:14px 18px 0;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.8px;margin-bottom:10px">💰 실질 투자금 산정</div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.7);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span>총 초기 투자금</span><span id="r-invest" style="color:white;font-weight:700">-</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.5);padding:4px 0">
+      <span>(-) 임차 보증금 <span style="font-size:9px;background:rgba(74,222,128,0.2);color:#4ade80;border-radius:3px;padding:1px 5px">퇴거 시 전액 반환</span></span>
+      <span style="color:#4ade80">-<span id="r-dep-val">-</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span>(-) 권리금 예상 회수액 <span style="font-size:9px;background:rgba(74,222,128,0.2);color:#4ade80;border-radius:3px;padding:1px 5px">회수율 적용</span></span>
+      <span style="color:#4ade80">-<span id="r-key-net">-</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#FF6B35;padding:8px 0">
+      <span>= 실질 투자금 (순 사라지는 돈)</span><span id="r-real-inv">-</span>
+    </div>
+  </div>
+
+  <!-- OCF 산정 내역 -->
+  <div style="padding:14px 18px 0;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.8px;margin-bottom:10px">📈 월 운영현금흐름 (OCF) 산정</div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.7);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span>월 세후 순이익</span><span id="r-monthly" style="color:white;font-weight:700">-</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.5);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span>(+) 비현금 감가상각 환원 <span style="font-size:9px;background:rgba(147,197,253,0.2);color:#93C5FD;border-radius:3px;padding:1px 5px">현금유출 없음</span></span>
+      <span style="color:#93C5FD">+<span id="r-dep-back">-</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#60A5FA;padding:8px 0">
+      <span>= 월 운영현금흐름 (OCF)</span><span id="r-monthly-ocf">-</span>
+    </div>
+    <div style="font-size:9px;color:rgba(255,255,255,0.3);padding-bottom:12px;line-height:1.5">
+      감가상각은 현금 지출이 없는 비용. 초기에 이미 지출된 자산 취득 원가를 기간 배분한 것이므로<br>실제 현금 회수력 계산 시 다시 더함. 보증금 기회비용(depDep)은 실제 비용이므로 제외 안함.
+    </div>
+  </div>
+
+  <!-- 회수기간 결과 -->
+  <div class="rec-grid" style="border-top:none">
+    <div class="rec-item">
+      <div class="rec-lbl" style="color:rgba(255,255,255,0.5)">실질 투자금</div>
+      <div class="rec-val" id="r-real-inv-2" style="color:#FF6B35;font-size:16px">-</div>
+      <div class="rec-unit" style="color:rgba(255,255,255,0.3)">보증금·회수권리금 제외</div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-lbl" style="color:rgba(255,255,255,0.5)">월 OCF</div>
+      <div class="rec-val" id="r-monthly-ocf-2" style="color:#60A5FA;font-size:16px">-</div>
+      <div class="rec-unit" style="color:rgba(255,255,255,0.3)">순이익 + 감가상각 환원</div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-lbl" style="color:rgba(255,255,255,0.5)">실질 투자회수기간</div>
+      <div class="rec-val" id="r-payback" style="color:#4ade80;font-size:20px">-</div>
+      <div class="rec-unit" id="r-payback-unit" style="color:rgba(255,255,255,0.4)">개월</div>
+    </div>
+  </div>
+</div>
+
+<!-- 절세 팁 (NEW) -->
+<div class="card">
+  <div class="sec-hd">
+    <div class="sec-title"><div class="sec-dot" style="background:#16A34A"></div>💡 절세 포인트 4가지</div>
+    <div class="sec-info">시행 순서대로 적용 추천</div>
+  </div>
+  <div class="tip-grid">
+    <div class="tip-item">
+      <div class="tip-icon">🟡</div>
+      <div class="tip-title">① 노란우산공제 (즉시 가입)</div>
+      <div class="tip-desc">월 최대 100만원, 연 최대 1,200만원 소득공제. 과세표준 구간을 낮춰 세율 자체를 줄임</div>
+      <div class="tip-save" id="tip-yellow-save">→ 절세액 계산 중...</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon">🏢</div>
+      <div class="tip-title">② 중소기업 특별세액감면 10%</div>
+      <div class="tip-desc">조특법 §7 — 음식업 소기업 수도권 10% 감면. 이미 자동 계산에 반영됨. 세무사 통해 연간 신청 필요</div>
+      <div class="tip-save" id="tip-sme-save">→ 절세액 계산 중...</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon">📦</div>
+      <div class="tip-title">③ 인테리어·집기 감가상각 비용화</div>
+      <div class="tip-desc">인테리어(48개월)·주방집기 감가상각을 비용으로 계상하면 과세표준 추가 감소. 세무사 기장 필수</div>
+      <div class="tip-save" id="tip-dep-save">→ 감가상각 절세액 계산 중...</div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-icon">📊</div>
+      <div class="tip-title">④ 성실신고 세액공제 활용</div>
+      <div class="tip-desc">연 매출 3억+ → 성실신고 의무. 대신 의료비·교육비·월세 세액공제 15% 추가 혜택. 신고기한 6월 30일</div>
+      <div class="tip-save" style="color:#3B82F6">→ 해당 시 세무사 상담 필수</div>
+    </div>
+  </div>
+</div>
+
+<!-- 리스크 -->
+<div class="card" style="background:#1C2B3A;overflow:hidden">
+  <div class="sec-hd" style="background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08)">
+    <div class="sec-title" style="color:white"><div class="sec-dot" style="background:#EF4444"></div>⚠️ 리스크 요인 TOP 3</div>
+    <div class="sec-info" style="color:rgba(255,255,255,0.3)">대응책 포함</div>
+  </div>
+  <div class="risk-grid">
+    <div class="risk-item">
+      <div><span class="risk-badge" style="background:rgba(239,68,68,.2);color:#f87171">🔴 HIGH</span></div>
+      <div class="risk-title">임대료 급등 / 재계약 리스크</div>
+      <div class="risk-desc">삼성역 오피스 상권 임대료는 영업이익의 22~56%. 재계약 시 20~30% 인상 시 보수 시나리오 실수령 급감. <br>→ 임대료 상한 특약 명시, 3년 장기계약 체결</div>
+    </div>
+    <div class="risk-item">
+      <div><span class="risk-badge" style="background:rgba(251,191,36,.15);color:#fde68a">🟡 MED</span></div>
+      <div class="risk-title">배달 채널 집중 / CM율 하락</div>
+      <div class="risk-desc">배달 CM율(~47.8%)은 홀(~64.7%) 대비 17%p 낮음. 배달 비중 40% 초과 시 블렌디드 CM율 3~5%p 하락.<br>→ 홀/포장 비중 60% 이상 유지</div>
+    </div>
+    <div class="risk-item">
+      <div><span class="risk-badge" style="background:rgba(251,146,60,.15);color:#fdba74">🟠 MED</span></div>
+      <div class="risk-title">최저임금 인상 / 세금 부담</div>
+      <div class="risk-desc">2026년 최저임금 추가 인상 시 인건비 증가. 연 매출 3억+ 성실신고 의무 → 세무사 비용 연 100~200만원 추가.<br>→ 노란우산공제 즉시 가입으로 절세</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function G(id){return document.getElementById(id);}
+function V(id){
+  var el=G(id); if(!el)return 0;
+  var s=el.value.replace(/,/g,'');
+  var ch='';
+  for(var i=0;i<s.length;i++){var c=s[i];if((c>='0'&&c<='9')||c==='.')ch+=c;}
+  var n=parseFloat(ch); return isNaN(n)?0:n;
+}
+function T(id,v){var el=G(id);if(el)el.textContent=v;}
+function cN(n){
+  var neg=''; if(n<0){neg='-';n=-n;} n=Math.round(n);
+  var s=''+n, r='', len=s.length;
+  for(var i=0;i<len;i++){if(i>0&&(len-i)%3===0)r+=',';r+=s[i];}
+  return neg+r;
+}
+function W(v){return '₩'+cN(Math.round(v));}
+function WS(n){
+  var a=n<0?-n:n, sg=n<0?'-':'';
+  if(a>=100000000)return sg+(a/100000000).toFixed(1)+'억';
+  if(a>=10000000)return sg+(a/10000000).toFixed(1)+'천만';
+  if(a>=10000)return sg+(a/10000).toFixed(0)+'만';
+  return W(n);
+}
+function Pct(v,b){return(!b||b===0)?'-':(v/b*100).toFixed(1)+'%';}
+function fmtC(el){
+  var s=el.value, ch='';
+  for(var i=0;i<s.length;i++){var c=s[i];if(c>='0'&&c<='9')ch+=c;}
+  if(!ch)return; el.value=cN(parseInt(ch,10));
+}
+function iTax(y){
+  if(y<=0)return 0;
+  if(y<=14000000)return y*.06;
+  if(y<=50000000)return y*.15-1260000;
+  if(y<=88000000)return y*.24-5760000;
+  if(y<=150000000)return y*.35-15440000;
+  if(y<=300000000)return y*.38-19940000;
+  if(y<=500000000)return y*.40-25940000;
+  if(y<=1000000000)return y*.42-35940000;
+  return y*.45-65940000;
+}
+function bracket(y){
+  if(y<=0)return '비과세';
+  if(y<=14000000)return '6%';
+  if(y<=50000000)return '15%';
+  if(y<=88000000)return '24%';
+  if(y<=150000000)return '35%';
+  if(y<=300000000)return '38%';
+  if(y<=500000000)return '40%';
+  if(y<=1000000000)return '42%';
+  return '45%';
+}
+
+function recalc(){
+  var price    = V('i-price');          // 홀 단가
+  var countWD  = V('i-count-wd');       // 주중 홀 일 객수
+  var countWE  = V('i-count-we');       // 주말 홀 일 객수
+  var wPrice   = V('i-wrap-price');     // 포장 단가
+  var wCountWD = V('i-wrap-count-wd');  // 주중 포장 일 건수
+  var wCountWE = V('i-wrap-count-we');  // 주말 포장 일 건수
+  var dp       = V('i-del-price');      // 배달 단가
+  var dcWD     = V('i-del-count-wd');   // 주중 배달 일 건수
+  var dcWE     = V('i-del-count-we');   // 주말 배달 일 건수
+  var days     = V('i-days');           // 월 총 영업일
+  var cr    = V('i-cogs-rate');  // 식재료율
+  var cardR = V('i-card-rate');  // 카드수수료율
+  var ar    = V('i-app-fee-rate');// 배달앱 수수료율
+  var rr    = V('i-royalty');    // 로열티율
+  var wage  = V('i-wage');       // 시급
+  var ftSalary = V('i-ft-salary');  // 정직원 월급
+  var ftProb   = V('i-ft-prob');    // 수습 지급률(%)
+  var ha1H  = V('i-ha1-h');         // 알바1 1일 시간 (월~목)
+  var ha2H  = V('i-ha2-h');         // 알바2 1일 시간 (금토일)
+  var weeks = V('i-weeks');          // 영업 주수
+  var empIns= V('i-emp-ins');    // 알바 4대보험율
+  var rent  = V('i-rent');       // 임대료
+  var mgmt  = V('i-mgmt');       // 관리비
+  var util  = V('i-util');       // 공과금
+  var comm  = V('i-comm');       // 통신
+  var appFx = V('i-app-fixed');  // 배달앱 월정액
+  var misc  = V('i-misc');       // 소모품
+  var vatIn = V('i-vat-in');     // 매입세액
+  var basicD= V('i-basic-ded'); // 기본공제
+  var yellow= V('i-yellow');     // 노란우산공제
+  var equip = V('i-equip');      // 주방집기
+  var intr  = V('i-interior');   // 인테리어
+  var key   = V('i-key');        // 권리금
+  var keyRec = V('i-key-recovery'); // 권리금 회수율(%)
+  var dep   = V('i-deposit');    // 보증금
+
+  // ── 주중/주말 일수 (매출 계산용) ──
+  var daysWD = days * 5/6;  // 주 6일 중 평일 5일
+  var daysWE = days * 1/6;  // 주 6일 중 토요일 1일
+
+  // ── 일판 (하루 순수 매출 — 주중/주말 분리) ──
+  var hallDailyWD  = price  * countWD;
+  var hallDailyWE  = price  * countWE;
+  var wrapDailyWD  = wPrice * wCountWD;
+  var wrapDailyWE  = wPrice * wCountWE;
+  var delDailyWD   = dp     * dcWD;
+  var delDailyWE   = dp     * dcWE;
+  var totalDailyWD = hallDailyWD + wrapDailyWD + delDailyWD;
+  var totalDailyWE = hallDailyWE + wrapDailyWE + delDailyWE;
+  // 평균 일판 (월별 가중평균)
+  var hallDaily  = (hallDailyWD*daysWD + hallDailyWE*daysWE) / days;
+  var wrapDaily  = (wrapDailyWD*daysWD + wrapDailyWE*daysWE) / days;
+  var delDaily   = (delDailyWD*daysWD  + delDailyWE*daysWE)  / days;
+  var totalDaily = hallDaily + wrapDaily + delDaily;
+
+  // ── 매출 (주중/주말 분리 후 합산) ──
+  var hallRevWD = price  * countWD  * daysWD;
+  var hallRevWE = price  * countWE  * daysWE;
+  var wrapRevWD = wPrice * wCountWD * daysWD;
+  var wrapRevWE = wPrice * wCountWE * daysWE;
+  var delRevWD  = dp     * dcWD     * daysWD;
+  var delRevWE  = dp     * dcWE     * daysWE;
+  var revWD = hallRevWD + wrapRevWD + delRevWD;
+  var revWE = hallRevWE + wrapRevWE + delRevWE;
+  var hallRev = hallRevWD + hallRevWE;
+  var wrapRev = wrapRevWD + wrapRevWE;
+  var delRev  = delRevWD  + delRevWE;
+  var rev     = hallRev + wrapRev + delRev;
+  var net     = rev / 1.1; // 공급가액
+
+  // ── 변동비 ──
+  var cogs   = rev * cr / 100;          // 식재료
+  var wrap500= 500 * ((wCountWD+dcWD)*daysWD + (wCountWE+dcWE)*daysWE); // 포장재 500원/건
+  var appFee = delRev * ar / 100;       // 배달앱 수수료
+  var cardFee= rev * cardR / 100;       // 카드수수료
+  var varCost= cogs + wrap500 + appFee + cardFee;
+  var cm     = rev - varCost;           // 블렌디드 공헌이익
+  var cmRate = rev>0 ? cm/rev : 0;
+
+  // 채널별 CM율 (단순 추정)
+  var hallVarR= cr/100 + cardR/100 + 0.014; // 홀: 식재료+카드+홀포장재(200/13500≈1.4%)
+  var wrapVarR= cr/100 + cardR/100 + (wPrice>0?500/wPrice:0); // 포장: 식재료+카드+500원포장
+  var delVarR = cr/100 + cardR/100 + ar/100 + (dp>0?500/dp:0); // 배달: 식재료+카드+수수료+포장재
+  var hallCM  = (1 - hallVarR)*100;
+  var wrapCM  = (1 - wrapVarR)*100;
+  var delCM   = (1 - delVarR)*100;
+
+  // ── 인건비 ──
+
+  // 풀타임 정직원 (월~금, 09:00~14:30, 고정 월급)
+  var ftPay  = ftSalary * ftProb / 100;    // 실지급액 (수습률 적용)
+  var ftIns  = ftPay * empIns / 100;       // 4대보험 사업주 부담 (정직원만)
+  var ftTotal = ftPay + ftIns;
+
+  // 알바1 (월~목, 3.5h/일, 주 14h → 주휴X, 4대보험X)
+  var ha1Days = weeks * 4;                 // 월~목 4일 × 4.3주
+  var ha1Base = wage * ha1H * ha1Days;
+
+  // 알바2 (금토일, 3.5h/일, 주 10.5h → 주휴X, 4대보험X)
+  var ha2Days = weeks * 3;                 // 금토일 3일 × 4.3주
+  var ha2Base = wage * ha2H * ha2Days;
+
+  var empInsAmt = ftIns;                   // 알바는 주 15h 미만 → 4대보험 없음
+  var laborBase = ftPay + ha1Base + ha2Base;
+  var labor = laborBase + ftIns;
+
+  // ── 로열티 ──
+  var royal = rev * rr / 100;
+
+  // ── 기타 고정비 ──
+  var etcFx = util + comm + appFx + misc;
+
+  // ── 감가상각·상각비 (비현금 비용) ──
+  var depEquip = equip / 48;          // 주방집기 48개월 상각
+  var depInt   = intr  / 48;          // 인테리어 48개월 상각
+  var depKey   = key * (1 - keyRec/100) / 48; // 권리금 순상각 (회수율 차감 후) 48개월
+  var depDep   = dep   * 0.03 / 12;   // 보증금 기회비용 연3%
+  var depTotal = depEquip + depInt + depKey + depDep;
+
+  // ── 고정비 합계 ──
+  var rentTotal = rent + mgmt;
+  var fixedOnly = rentTotal + labor + etcFx + depTotal; // 순수 고정비 (BEP 분자, 감가상각 포함)
+  var fixTotal  = fixedOnly + royal;                    // 고정비+로열티
+
+  // ── 영업이익 ──
+  var op = cm - fixTotal;
+  var opRate = rev>0 ? op/rev : 0;
+
+  // ── VAT ──
+  var vatOut = net * 0.1;
+  var vatPay = vatOut - vatIn;
+  var vatQtr = vatPay * 3;
+
+  // ── 실질 월 사업소득 ──
+  var realIncome = op - vatPay;
+
+  // ── 사장 4대보험 (지역가입자) ──
+  var pensionBase = Math.min(realIncome, 5900000);
+  var pension     = pensionBase > 0 ? pensionBase * 0.09 : 0;
+  var health      = realIncome > 0 ? realIncome * 0.0709 : 0;
+  var ltcare      = health * 0.1295;
+  var insTotal    = pension + health + ltcare;
+
+  // ── 종합소득세 ──
+  var annIncome = realIncome * 12;
+  var penDed    = pension * 12;
+  var taxBase   = Math.max(0, annIncome - penDed - basicD - yellow);
+  var taxCalc   = iTax(taxBase);
+  var smeReduce = taxCalc * 0.10;
+  var finalTax  = taxCalc - smeReduce;
+  var localTax  = finalTax * 0.10;
+  var annTax    = finalTax + localTax;
+  var mTax      = annTax / 12;
+
+  // ── 실수령 순이익 ──
+  var burdenTotal = vatPay + insTotal + mTax;
+  var netIncome   = op - burdenTotal;
+  var netRate     = rev > 0 ? netIncome/rev : 0;
+
+  // ── BEP ──
+  var realCM = cmRate - rr/100;
+  var bepRev = realCM > 0 ? fixedOnly / realCM : 0;
+  var bepDay = bepRev / days;
+  // BEP: 하루 평균 객수 (주중/주말 가중평균)
+  var avgCount  = (countWD*daysWD + countWE*daysWE) / days;
+  var avgWCount = (wCountWD*daysWD + wCountWE*daysWE) / days;
+  var avgDc     = (dcWD*daysWD + dcWE*daysWE) / days;
+  var blendedPrice = (avgCount+avgWCount+avgDc)>0 ? (price*avgCount+wPrice*avgWCount+dp*avgDc)/(avgCount+avgWCount+avgDc) : 13000;
+  var bepCount = blendedPrice > 0 ? Math.ceil(bepDay / blendedPrice) : 0;
+  var currCount = avgCount + avgWCount + avgDc;
+  var bepRatio = bepRev>0 ? rev/bepRev*100 : 0;
+
+  // ── 초기투자 & 실질 투자회수 ──
+  var totInv  = equip + intr + key + dep;   // 총 초기 투자금 (전액)
+  var pb      = netIncome > 0 ? totInv / netIncome : 0;  // 구 방식 (참고용)
+
+  // 실질 투자금: 회수 가능 항목 제외
+  // - 보증금(dep): 퇴거 시 전액 반환 → 회수 대상 아님
+  // - 권리금 회수액(key × keyRec%): 예상 회수분 제외
+  var keyNet  = key * (1 - keyRec/100);    // 권리금 순손실분
+  var realInv = equip + intr + keyNet;      // 실질 투자금
+
+  // 월 운영현금흐름(OCF): 순이익 + 비현금 감가상각
+  // 감가상각은 현금 지출 없는 비용(초기에 이미 지출) → add-back
+  var monthOCF = netIncome + depEquip + depInt + depKey;
+  var pbOCF    = monthOCF > 0 ? realInv / monthOCF : 0;  // 실질 회수기간
+
+  // ── 절세 계산 ──
+  // 노란우산 절세 (적용 전후 세금 차이)
+  var taxBaseNoYellow = Math.max(0, annIncome - penDed - basicD);
+  var taxNoYellow = (iTax(taxBaseNoYellow) * 0.90) * 1.10;
+  var yellowSave = (taxNoYellow - annTax);
+
+  // 중소기업 감면 절세액
+  var smeSaveAnn = smeReduce * 1.10; // 지방세 포함
+
+  // 감가상각 절세 (연간 상각비 × 실효세율)
+  var depAnn = depTotal * 12;
+  var effRate = taxBase > 0 ? taxCalc / taxBase * 0.90 * 1.10 : 0;
+  var depTaxSave = depAnn * effRate;
+
+  // ════════ DOM 업데이트 ════════
+
+  // 일판 (주중/주말 분리)
+  var wdD = Math.round(daysWD*10)/10, weD = Math.round(daysWE*10)/10;
+  T('v-daily-wd', W(totalDailyWD)); T('p-daily-wd', Pct(totalDailyWD, totalDailyWD+totalDailyWE));
+  T('v-daily-we', W(totalDailyWE)); T('p-daily-we', Pct(totalDailyWE, totalDailyWD+totalDailyWE));
+  T('v-daily-total', W(totalDaily));
+  T('v-hall-daily', W(hallDaily));
+  T('rn-hall-daily', '주중 '+W(hallDailyWD)+' / 토 '+W(hallDailyWE));
+  T('v-wrap-daily', W(wrapDaily));
+  T('rn-wrap-daily', '주중 '+W(wrapDailyWD)+' / 토 '+W(wrapDailyWE));
+  T('v-del-daily',  W(delDaily));
+  T('rn-del-daily',  '주중 '+W(delDailyWD)+' / 토 '+W(delDailyWE));
+
+  // 매출
+  T('v-hall-rev', W(hallRev)); T('p-hall-rev', Pct(hallRev,rev));
+  T('p-price', '₩'+cN(price));
+  T('p-count-wd', cN(countWD)+'명/일'); T('rn-hall-wd', W(hallRevWD));
+  T('p-count-we', cN(countWE)+'명/일'); T('rn-hall-we', W(hallRevWE));
+  T('v-wrap-rev', W(wrapRev)); T('p-wrap-rev', Pct(wrapRev,rev));
+  T('p-wrap-price', '₩'+cN(wPrice));
+  T('p-wrap-count-wd', cN(wCountWD)+'건/일'); T('rn-wrap-wd', W(wrapRevWD));
+  T('p-wrap-count-we', cN(wCountWE)+'건/일'); T('rn-wrap-we', W(wrapRevWE));
+  T('v-del-rev', W(delRev)); T('p-del-rev', Pct(delRev,rev));
+  T('p-del-price', '₩'+cN(dp));
+  T('p-del-count-wd', cN(dcWD)+'건/일'); T('rn-del-wd', W(delRevWD));
+  T('p-del-count-we', cN(dcWE)+'건/일'); T('rn-del-we', W(delRevWE));
+  T('p-days', '주중 '+wdD+'일 / 토 '+weD+'일');
+  // 주중/주말 소계
+  T('v-rev-wd', W(revWD)); T('p-rev-wd', Pct(revWD,rev));
+  T('f-wd-rev-days', '약 '+wdD+'일/월');
+  T('v-rev-we', W(revWE)); T('p-rev-we', Pct(revWE,rev));
+  T('f-we-rev-days', '약 '+weD+'일/월');
+  T('v-revenue', W(rev)); T('v-net', W(net)); T('p-net', Pct(net,rev));
+
+  // CM
+  T('cm-hall', hallCM.toFixed(1)+'%'); T('cm-wrap', wrapCM.toFixed(1)+'%'); T('cm-del', delCM.toFixed(1)+'%');
+  G('cmb-hall').style.width = Math.min(100,hallCM)+'%';
+  G('cmb-wrap').style.width = Math.min(100,wrapCM)+'%';
+  G('cmb-del').style.width  = Math.min(100,delCM)+'%';
+  T('p-cogs', Pct(cogs,rev)); T('v-cogs', W(cogs));
+  T('p-card', Pct(cardFee,rev)); T('v-card', W(cardFee));
+  T('p-app-fee', Pct(appFee,rev)); T('v-app-fee', W(appFee));
+  T('v-cm-total', W(cm)); T('p-cm-total', Pct(cm,rev));
+  T('v-cm-rate', 'CM율 '+(cmRate*100).toFixed(1)+'%');
+  T('f-royalty','매출 × '+rr+'%');
+
+  // 고정비
+  T('v-rent-total', W(rentTotal)); T('p-rent-total', Pct(rentTotal,rev));
+  T('p-rent', Pct(rent,rev)); T('p-mgmt', Pct(mgmt,rev));
+  // 주중/주말 일수 표시
+  var wdDays = Math.round(daysWD*10)/10;
+  var weDays = Math.round(daysWE*10)/10;
+  T('v-wd-days', '주중 약 '+wdDays+'일 / 토 약 '+weDays+'일');
+  // 정직원
+  T('v-ft-pay',   W(ftPay));
+  T('v-ft-total', W(ftTotal));
+  T('p-ft-salary', Pct(ftSalary,rev));
+  T('p-ft-prob',   ftProb+'%로 ₩'+cN(Math.round(ftPay))+'실지급');
+  // 알바1·2
+  T('v-ha1-base', W(ha1Base));
+  T('v-ha2-base', W(ha2Base));
+  // 4대보험 (정직원만)
+  T('p-emp-ins', Pct(ftIns,rev)); T('v-ft-ins-note', W(ftIns)+'(정직원만)');
+  // 합계
+  T('v-labor-total', W(labor)); T('p-labor-total', Pct(labor,rev));
+  T('p-wage', '알바1 월~목 '+ha1H+'h×4일 / 알바2 금토일 '+ha2H+'h×3일');
+  T('v-etc-total', W(etcFx)); T('p-etc-total', Pct(etcFx,rev));
+  T('p-util', Pct(util,rev)); T('p-comm', Pct(comm,rev));
+  T('p-app-fixed', Pct(appFx,rev)); T('p-misc', Pct(misc,rev));
+  T('v-royalty', W(royal)); T('p-royalty', Pct(royal,rev));
+  // 감가상각
+  T('v-dep-equip', W(depEquip)); T('p-dep-equip', Pct(depEquip,rev));
+  T('v-dep-int',   W(depInt));   T('p-dep-int',   Pct(depInt,rev));
+  T('v-dep-key',   W(depKey));   T('p-dep-key',   Pct(depKey,rev));
+  T('v-dep-dep',   W(depDep));   T('p-dep-dep',   Pct(depDep,rev));
+  T('v-dep-total', W(depTotal)); T('p-dep-total',  Pct(depTotal,rev));
+  T('v-fix-total', W(fixTotal)); T('p-fix-total', Pct(fixTotal,rev));
+  T('fix-lbl', '순수고정비(상각포함): '+W(fixedOnly)+' / 로열티 포함: '+W(fixTotal));
+
+  // 영업이익
+  var opRow=G('op-row');
+  if(opRow)opRow.className='row row-gr '+(op>=0?'pos':'neg');
+  T('op-label', op>=0?'④ 영업이익':'④ 영업손실');
+  T('v-op', W(op)); T('p-op', (opRate*100).toFixed(1)+'%');
+
+  // VAT
+  T('v-vat-out', W(vatOut)); T('p-vat-out', Pct(vatOut,rev));
+  T('p-vat-in', Pct(vatIn,rev));
+  T('v-vat-pay', W(vatPay)); T('p-vat-pay', Pct(vatPay,rev));
+  T('v-vat-qtr', '분기 납부: '+W(vatQtr));
+
+  // 사장 보험
+  T('v-real-income', W(realIncome)); T('p-real-income', Pct(realIncome,rev));
+  T('v-pension', W(pension)); T('p-pension', Pct(pension,rev));
+  T('v-health', W(health)); T('p-health', Pct(health,rev));
+  T('v-ltcare', W(ltcare)); T('p-ltcare', Pct(ltcare,rev));
+  T('v-ins-total', W(insTotal)); T('p-ins-total', Pct(insTotal,rev));
+
+  // 종합소득세
+  T('v-annual', W(annIncome));
+  T('v-pen-ded', W(penDed));
+  T('v-taxbase', W(taxBase)); T('v-bracket', bracket(taxBase));
+  T('v-tax-calc', W(taxCalc)); T('v-tax-rate', '세율: '+bracket(taxBase));
+  T('v-sme-reduce', W(smeReduce));
+  T('v-final-tax', W(finalTax));
+  T('v-local-tax', W(localTax)); T('p-local-tax', Pct(localTax,rev));
+  T('v-tax-total', W(mTax)); T('p-tax-total', Pct(mTax,rev));
+  T('v-yellow-save', yellow>0?'→ 예상 절세: '+W(yellowSave)+'/연':'최대 연 1,200만원');
+
+  // 실수령
+  T('v-burden-total', W(burdenTotal)); T('p-burden-total', Pct(burdenTotal,op>0?op:1));
+  T('v-net-income', W(netIncome)); T('p-net-income', Pct(netIncome,rev));
+  T('rn-net', '연 환산: '+W(netIncome*12));
+  var netRow=G('net-row');
+
+  // BEP
+  T('bep-rev', cN(Math.round(bepRev)));
+  T('bep-daily', cN(Math.round(bepDay)));
+  T('bep-count', bepCount>0?bepCount+'명':'계산불가');
+  var bepRatioEl=G('bep-ratio');
+  if(bepRatioEl){
+    bepRatioEl.textContent=bepRatio.toFixed(0)+'%';
+    bepRatioEl.style.color=bepRatio>=100?'#16A34A':bepRatio>=70?'#D97706':'#DC2626';
+  }
+  T('bep-fixed', W(fixedOnly));
+  T('bep-cm', (realCM*100).toFixed(1)+'%');
+  T('bep-curr-count', cN(Math.round(currCount*10)/10)+'명/건 (일 평균)');
+  T('bep-margin-count', (currCount-bepCount)>0?'+ '+cN(currCount-bepCount)+'명 여유':'-'+cN(bepCount-currCount)+'명 부족');
+
+  // 초기투자
+  T('v-equip-dep', W(depEquip)); T('v-int-dep', W(depInt));
+  T('v-key-dep',   W(depKey));   T('v-dep-opp', W(depDep));
+  T('v-total-inv', W(totInv));
+
+  // 투자회수 (OCF 기준)
+  T('r-monthly',    WS(netIncome));
+  T('r-invest',     WS(totInv));
+  T('r-dep-val',    W(dep));
+  T('r-key-net',    W(key * keyRec/100));
+  T('r-real-inv',   WS(realInv));
+  T('r-real-inv-2', WS(realInv));
+  T('r-dep-back',   W(depEquip+depInt+depKey));
+  T('r-monthly-ocf',   WS(monthOCF));
+  T('r-monthly-ocf-2', WS(monthOCF));
+  if(monthOCF>0){
+    T('r-payback', pbOCF<120?pbOCF.toFixed(1):'120+');
+    if(pbOCF<24)T('r-payback-unit','개월');
+    else if(pbOCF<120)T('r-payback-unit','개월 ('+(pbOCF/12).toFixed(1)+'년)');
+    else T('r-payback-unit','개월 이상');
+  }else{T('r-payback','∞');T('r-payback-unit','(순손실)');}
+
+  // 절세 팁
+  T('tip-yellow-save', yellow>0?'→ 연 절세: '+W(yellowSave)+'':'→ 0원 입력됨 — 즉시 가입 강력 추천!');
+  T('tip-sme-save', '→ 연 절세: '+W(smeSaveAnn)+' (이미 반영)');
+  T('tip-dep-save', '→ 연 상각비: '+W(depAnn)+' / 세금절감: '+W(depTaxSave)+'/연 (세무사 기장 필요)');
+
+  // KPI 바
+  T('k-rev', WS(rev));
+  var kop=G('k-op');
+  if(kop){kop.textContent=WS(op);kop.className='kpi-val '+(op>0?'pos':op<0?'neg':'');}
+  T('k-op-sub', W(netIncome)+'/월 실수령');
+  var km=G('k-margin');
+  if(km){var om=opRate*100;km.textContent=om.toFixed(1)+'%';km.className='kpi-val '+(om>15?'pos':om<0?'neg':'warn');}
+  var knet=G('k-net');
+  if(knet){knet.textContent=WS(netIncome);knet.className='kpi-val '+(netIncome>0?'pos':netIncome<0?'neg':'');}
+  var kpb=G('k-payback');
+  if(kpb){
+    if(monthOCF>0){kpb.textContent=pbOCF.toFixed(1)+'개월';kpb.className='kpi-val '+(pbOCF<=24?'pos':pbOCF<=48?'warn':'neg');}
+    else{kpb.textContent='-';kpb.className='kpi-val neg';}
+  }
+}
+
+// ── 시나리오 Preset ──
+var SCEN = {
+  '보수': {price:13000,countWD:50,countWE:25,wPrice:13000,wCountWD:12,wCountWE:6,dp:13000,dcWD:18,dcWE:12,days:26.1,
+            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+  '기본': {price:13000,countWD:80,countWE:40,wPrice:13000,wCountWD:20,wCountWE:10,dp:13000,dcWD:30,dcWE:20,days:26.1,
+            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+  '낙관': {price:13000,countWD:110,countWE:55,wPrice:13000,wCountWD:30,wCountWE:15,dp:13000,dcWD:45,dcWE:30,days:26.1,
+            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+};
+function setV(id,v,comma){
+  var el=G(id); if(!el)return;
+  el.value=comma?cN(v):v;
+}
+function loadScen(s){
+  var d=SCEN[s]; if(!d)return;
+  setV('i-price',d.price,true);
+  setV('i-count-wd',d.countWD,false);   setV('i-count-we',d.countWE,false);
+  setV('i-wrap-price',d.wPrice,true);
+  setV('i-wrap-count-wd',d.wCountWD,false); setV('i-wrap-count-we',d.wCountWE,false);
+  setV('i-del-price',d.dp,true);
+  setV('i-del-count-wd',d.dcWD,false);  setV('i-del-count-we',d.dcWE,false);
+  setV('i-days',d.days,false);
+  setV('i-rent',d.rent,true); setV('i-mgmt',d.mgmt,true);
+  setV('i-interior',d.interior,true); setV('i-key',d.key||0,true); setV('i-key-recovery',d.keyRecovery||50,false); setV('i-deposit',d.deposit,true);
+  recalc();
+}
+
+function doReset(){
+  if(!confirm('모든 입력값을 기본값으로 초기화하시겠습니까?'))return;
+  setV('i-price',13000,true);
+  setV('i-count-wd',80,false);   setV('i-count-we',40,false);
+  setV('i-wrap-price',13000,true);
+  setV('i-wrap-count-wd',20,false); setV('i-wrap-count-we',10,false);
+  setV('i-del-price',13000,true);
+  setV('i-del-count-wd',30,false);  setV('i-del-count-we',20,false);
+  setV('i-days',26.1,false);
+  setV('i-cogs-rate',32,false); setV('i-card-rate',1.5,false);
+  setV('i-app-fee-rate',13,false); setV('i-royalty',3,false);
+  setV('i-wage',10030,true); setV('i-ft-salary',2750000,true); setV('i-ft-prob',90,false);
+  setV('i-ha1-h',3.5,false); setV('i-ha2-h',3.5,false); setV('i-weeks',4.3,false);
+  setV('i-emp-ins',10.5,false);
+  setV('i-rent',3450000,true); setV('i-mgmt',400000,true);
+  setV('i-util',250000,true); setV('i-comm',50000,true);
+  setV('i-app-fixed',88000,true); setV('i-misc',100000,true);
+  setV('i-vat-in',400000,true);
+  setV('i-basic-ded',1500000,true); setV('i-yellow',12000000,true);
+  setV('i-equip',13000000,true); setV('i-interior',70000000,true);
+  setV('i-key',50000000,true); setV('i-key-recovery',50,false); setV('i-deposit',70000000,true);
+  recalc();
+}
+
+function doCSV(){
+  var rows=[['항목','값']];
+  var ids=[
+    ['홀단가','i-price'],['주중홀객수','i-count-wd'],['토요일홀객수','i-count-we'],
+    ['포장단가','i-wrap-price'],['주중포장건수','i-wrap-count-wd'],['토요일포장건수','i-wrap-count-we'],
+    ['배달단가','i-del-price'],['주중배달건수','i-del-count-wd'],['토요일배달건수','i-del-count-we'],
+    ['영업일','i-days'],['식재료율','i-cogs-rate'],['카드수수료율','i-card-rate'],
+    ['배달수수료율','i-app-fee-rate'],['로열티율','i-royalty'],
+    ['시급','i-wage'],['정직원월급','i-ft-salary'],['수습비율','i-ft-prob'],
+    ['알바1시간','i-ha1-h'],['알바2시간','i-ha2-h'],['영업주수','i-weeks'],['4대보험율','i-emp-ins'],
+    ['임대료','i-rent'],['관리비','i-mgmt'],
+    ['전기가스수도','i-util'],['통신','i-comm'],['배달앱정액','i-app-fixed'],['소모품','i-misc'],
+    ['매입세액','i-vat-in'],['기본공제','i-basic-ded'],['노란우산','i-yellow'],
+    ['주방집기','i-equip'],['인테리어','i-interior'],['권리금','i-key'],['보증금','i-deposit'],
+  ];
+  for(var i=0;i<ids.length;i++)rows.push([ids[i][0],V(ids[i][1])]);
+  var csv=rows.map(function(r){return r.join(',');}).join('\r\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='HOOKED_손익계산서.csv'; a.click();
+}
+
+window.onload=function(){recalc();};
+</script>
+</body>
+</html>
