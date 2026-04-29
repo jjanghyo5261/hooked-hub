@@ -1623,5 +1623,51 @@ function doCSV(){
 
 window.onload=function(){recalc();};
 </script>
+
+<!-- ☁️ Cloud Save Feature -->
+<style>
+#psb-wrap{position:fixed;bottom:30px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+#psb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500}
+#psb-btn{background:#1d4ed8;color:#fff;border:none;border-radius:14px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(29,78,216,0.38);transition:all 0.2s;letter-spacing:-0.3px}
+#psb-btn:hover{background:#1e40af;transform:translateY(-1px)}
+#psb-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none}
+@media(max-width:599px){#psb-wrap{bottom:74px;right:10px}#psb-btn{padding:9px 16px;font-size:13px}}
+</style>
+<div id="psb-wrap">
+  <div id="psb-badge">🔄 불러오는 중...</div>
+  <button id="psb-btn" onclick="cloudSaveProfit()">💾 저장하기</button>
+</div>
+<script>
+(function(){
+  const URL='https://jsonblob.com/api/jsonBlob/019dd79c-70f1-75b6-8078-cb054f4f53bf';
+  function fmt(iso){const d=new Date(iso);return d.toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})+' '+d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});}
+  function getInputs(){const o={};document.querySelectorAll('input.ni[id]').forEach(e=>o[e.id]=e.value);return o;}
+  function setInputs(o){let ch=false;Object.entries(o).forEach(([k,v])=>{const e=document.getElementById(k);if(e&&e.value!==v){e.value=v;ch=true;}});if(ch&&typeof recalc==='function')recalc();}
+  window.cloudSaveProfit=async function(){
+    const btn=document.getElementById('psb-btn'),badge=document.getElementById('psb-badge');
+    btn.textContent='저장 중...';btn.disabled=true;
+    try{
+      const r=await fetch(URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({inputs:getInputs(),saved_at:new Date().toISOString()})});
+      if(!r.ok)throw new Error();
+      badge.textContent='✅ 저장됨 · '+fmt(new Date().toISOString());
+      btn.textContent='✅ 저장됨!';
+      setTimeout(()=>{btn.textContent='💾 저장하기';btn.disabled=false;},2500);
+    }catch(e){badge.textContent='❌ 저장 실패';btn.textContent='💾 저장하기';btn.disabled=false;}
+  };
+  async function cloudLoadP(){
+    const badge=document.getElementById('psb-badge');
+    try{
+      const r=await fetch(URL+'?nc='+Date.now());
+      if(!r.ok){badge.textContent='☁️ 첫 저장 대기 중';return;}
+      const data=await r.json();
+      if(data&&data.inputs&&Object.keys(data.inputs).length>0){
+        setInputs(data.inputs);
+        badge.textContent='☁️ 마지막 저장: '+(data.saved_at?fmt(data.saved_at):'알 수 없음');
+      }else{badge.textContent='☁️ 첫 저장 대기 중';}
+    }catch(e){badge.textContent='☁️ 연결 실패';}
+  }
+  window.addEventListener('load',()=>setTimeout(cloudLoadP,900));
+})();
+</script>
 </body>
 </html>
