@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOOKED · 창업 허브</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #faf9f6;
+  --border: #e8e3d8;
+  --border2: #d4cdc0;
+  --text: #1a1814;
+  --text2: #6b6456;
+  --text3: #a09890;
+  --accent: #FF6B35;
+  --accent-light: #fff0e9;
+  --accent-dark: #E85D2A;
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Pretendard', -apple-system, sans-serif;
+  --radius: 16px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --topbar-h: 58px;
+  --bottom-nav-h: 60px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════════ */
+.topbar {
+  background: linear-gradient(135deg, #1C2B3A, #243447);
+  padding: 0 24px;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.topbar-brand { display: flex; align-items: center; gap: 11px; }
+.brand-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.brand-name { font-family: var(--font-display); font-size: 22px; color: white; letter-spacing: 2px; }
+.brand-sub  { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.topbar-date { font-size: 12px; color: rgba(255,255,255,0.45); margin-right: 4px; }
+
+/* 햄버거 버튼 (모바일·태블릿 전용) */
+.hamburger {
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  font-size: 18px;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 버튼 공통 */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none;
+  font-family: var(--font-body);
+  transition: all 0.15s;
+}
+.btn-ghost   { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.15); }
+.btn-ghost:hover { background: rgba(255,255,255,0.2); color: white; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+.btn-outline:hover { border-color: var(--text3); color: var(--text); }
+
+/* ═══════════════════════════════════════════
+   DESKTOP LAYOUT
+═══════════════════════════════════════════ */
+.layout { display: flex; min-height: calc(100vh - var(--topbar-h)); }
+
+/* ── 사이드바 (데스크탑) */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 10px;
+  position: sticky;
+  top: var(--topbar-h);
+  height: calc(100vh - var(--topbar-h));
+  overflow-y: auto;
+  transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  z-index: 150;
+}
+.sidebar-logo {
+  padding: 0 10px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+  font-size: 11px; color: var(--text3); line-height: 1.6;
+}
+.sidebar-logo strong { display: block; font-size: 13px; color: var(--text2); font-weight: 600; margin-bottom: 2px; }
+.sidebar-label {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0 8px; margin-bottom: 4px; margin-top: 14px;
+}
+.sidebar-close { display: none; }
+
+.folder-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px;
+  cursor: pointer; font-size: 13px; font-weight: 500;
+  color: var(--text2); transition: all 0.14s; user-select: none;
+}
+.folder-item:hover { background: var(--bg); color: var(--text); }
+.folder-item.active { background: var(--accent-light); color: var(--accent); }
+.folder-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.folder-count {
+  margin-left: auto; font-size: 11px; color: var(--text3);
+  background: var(--bg); padding: 1px 6px; border-radius: 10px;
+}
+.folder-item.active .folder-count { background: rgba(255,107,53,0.15); color: var(--accent); }
+
+/* ── 사이드바 오버레이 (모바일) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(26,24,20,0.5);
+  z-index: 140;
+}
+.sidebar-backdrop.show { display: block; }
+
+/* ═══════════════════════════════════════════
+   TABLET TAB BAR
+═══════════════════════════════════════════ */
+.tab-bar {
+  display: none;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 8px;
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 100;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--surface2); color: var(--text2);
+  transition: all 0.14s; white-space: nowrap;
+  user-select: none;
+}
+.tab-pill:hover { border-color: var(--border2); color: var(--text); }
+.tab-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+.tab-pill .tab-cnt {
+  font-size: 10px; font-weight: 700;
+  background: rgba(0,0,0,0.1);
+  padding: 1px 5px; border-radius: 8px;
+}
+.tab-pill.active .tab-cnt { background: rgba(255,255,255,0.25); }
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+.main { flex: 1; padding: 28px 32px; min-width: 0; }
+.main-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 22px;
+}
+.main-title { font-family: var(--font-display); font-size: 24px; }
+.main-count { font-size: 13px; color: var(--text3); }
+
+/* ── 카드 그리드 */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+/* ── 툴 카드 */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.3s ease both;
+}
+.tool-card:hover { border-color: var(--border2); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.tool-card:active { transform: translateY(0); box-shadow: none; }
+.tool-card.download-card { border-style: dashed; }
+.tool-card.download-card:hover { border-color: var(--accent); background: var(--accent-light); }
+
+.color-bar { position: absolute; top:0; left:0; right:0; height: 3px; border-radius: var(--radius) var(--radius) 0 0; }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px; line-height: 1.3; }
+.card-desc  { font-size: 12px; color: var(--text3); line-height: 1.7; margin-bottom: 16px; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.card-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+  padding: 3px 8px; border-radius: 6px;
+  display: flex; align-items: center; gap: 4px;
+}
+.card-arrow { font-size: 12px; font-weight: 600; color: var(--text3); transition: color 0.14s; }
+.tool-card:hover .card-arrow { color: var(--text); }
+
+/* ── 섹션 구분선 */
+.section-label {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV (모바일 전용)
+═══════════════════════════════════════════ */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--bottom-nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.bottom-nav::-webkit-scrollbar { display: none; }
+.bottom-nav-inner {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  min-width: max-content;
+  padding: 0 4px;
+}
+.bottom-tab {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; padding: 0 16px;
+  cursor: pointer; min-width: 72px;
+  font-size: 10px; font-weight: 600;
+  color: var(--text3); transition: color 0.15s;
+  border: none; background: none;
+  font-family: var(--font-body);
+  position: relative;
+}
+.bottom-tab.active { color: var(--accent); }
+.bottom-tab.active::after {
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 32px; height: 3px;
+  background: var(--accent);
+  border-radius: 0 0 4px 4px;
+}
+.bottom-tab-icon { font-size: 20px; line-height: 1; }
+.bottom-tab-label { white-space: nowrap; }
+
+/* ═══════════════════════════════════════════
+   OVERLAYS & MODALS
+═══════════════════════════════════════════ */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(26,24,20,0.55);
+  backdrop-filter: blur(6px);
+  z-index: 300;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.overlay.show { display: flex; }
+
+.modal { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-lg); overflow: hidden; width: 100%; }
+.modal-head { padding: 24px 24px 0; }
+.modal-head h2 { font-family: var(--font-display); font-size: 20px; margin-bottom: 3px; }
+.modal-head p  { font-size: 13px; color: var(--text3); }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal-foot { padding: 0 24px 24px; display: flex; gap: 8px; justify-content: flex-end; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.04em; }
+.form-input {
+  padding: 9px 12px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px;
+  font-family: var(--font-body); color: var(--text);
+  background: var(--surface2); outline: none;
+  transition: border-color 0.14s;
+  -webkit-appearance: none;
+}
+.form-input:focus { border-color: var(--accent); background: white; }
+
+/* ── 뷰어 모달 */
+.viewer-modal {
+  background: var(--surface);
+  border-radius: 20px; width: 100%;
+  max-width: 1100px; max-height: 92vh;
+  box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.viewer-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; background: #faf9f7;
+}
+.viewer-head-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.viewer-folder-tag {
+  font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 6px;
+  background: var(--accent-light); color: var(--accent);
+  white-space: nowrap; flex-shrink: 0;
+}
+.viewer-title { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewer-body { flex: 1; overflow: auto; }
+.viewer-body iframe { width: 100%; height: calc(92vh - 58px); border: none; display: block; }
+
+/* 파일 없음 */
+.no-file { padding: 60px 40px; text-align: center; }
+.no-file-icon { font-size: 48px; margin-bottom: 16px; }
+.no-file h3  { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.no-file p   { font-size: 13px; color: var(--text3); line-height: 1.8; }
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+/* ═══════════════════════════════════════════
+   TABLET (768px ~ 1023px)
+═══════════════════════════════════════════ */
+@media (max-width: 1023px) and (min-width: 600px) {
+  /* 사이드바 숨기고 탭바 표시 */
+  .sidebar        { display: none; }
+  .tab-bar        { display: flex; }
+  .hamburger      { display: none; }
+  .topbar-date    { display: none; }
+
+  .layout { flex-direction: column; min-height: auto; }
+  .main   { padding: 20px 20px 32px; }
+
+  /* 탭바가 있을 때 레이아웃 최상위를 조정 */
+  .main-title { font-size: 20px; }
+
+  /* 2열 그리드 */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .card-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE (≤ 599px)
+═══════════════════════════════════════════ */
+@media (max-width: 599px) {
+  :root { --topbar-h: 52px; }
+
+  /* 탑바 */
+  .topbar       { padding: 0 16px; }
+  .brand-name   { font-size: 18px; letter-spacing: 1px; }
+  .brand-sub    { display: none; }
+  .topbar-date  { display: none; }
+  .btn-ghost    { display: none; } /* "페이지 추가" 버튼 숨김 */
+  .hamburger    { display: flex; }
+
+  /* 사이드바 → 드로어로 전환 */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 280px;
+    height: 100vh;
+    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-100%);
+    padding-top: 0;
+    z-index: 160;
+  }
+  .sidebar.open  { transform: translateX(0); animation: slideIn 0.28s cubic-bezier(.4,0,.2,1) both; }
+  .sidebar-close {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+    font-size: 14px; font-weight: 700; color: var(--text2);
+  }
+  .sidebar-close button {
+    background: none; border: none; font-size: 20px;
+    color: var(--text3); cursor: pointer; padding: 4px;
+  }
+  .sidebar-logo { display: none; }
+
+  /* 탭바 없음 */
+  .tab-bar { display: none; }
+
+  /* 레이아웃 */
+  .layout { flex-direction: column; min-height: auto; }
+  .main   { padding: 16px 14px; padding-bottom: calc(var(--bottom-nav-h) + 16px); }
+
+  /* 헤더 */
+  .main-header { margin-bottom: 16px; }
+  .main-title  { font-size: 20px; }
+  .main-count  { font-size: 12px; }
+
+  /* 1열 그리드 */
+  .grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* 카드 가로형으로 */
+  .tool-card { padding: 14px 16px; }
+  .card-top  { margin-bottom: 8px; }
+  .card-icon { width: 38px; height: 38px; font-size: 19px; border-radius: 10px; }
+  .card-title { font-size: 14px; }
+  .card-desc  { font-size: 12px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 12px; }
+
+  /* 하단 내비게이션 */
+  .bottom-nav { display: block; }
+
+  /* 뷰어 풀스크린 */
+  .overlay { padding: 0; align-items: flex-end; }
+  .viewer-modal {
+    border-radius: 20px 20px 0 0;
+    max-height: 96vh;
+    max-width: 100%;
+  }
+  .viewer-head { padding: 12px 16px; }
+  .viewer-folder-tag { display: none; }
+  .viewer-title { font-size: 14px; }
+  .viewer-body iframe { height: calc(96vh - 52px); }
+
+  /* 편집 모달 */
+  .overlay:not(#viewerOverlay) { align-items: flex-end; }
+  .modal { border-radius: 20px 20px 0 0; }
+  .modal-head { padding: 20px 20px 0; }
+  .modal-body { padding: 16px 20px; }
+  .modal-foot { padding: 0 20px 32px; }
+
+  /* 섹션 구분 */
+  .section-label { font-size: 10px; }
+}
+
+/* ═══════════════════════════════════════════
+   VERY SMALL (≤ 360px)
+═══════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .brand-name { font-size: 16px; }
+  .main { padding: 12px 10px; padding-bottom: calc(var(--bottom-nav-h) + 12px); }
+  .grid { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── 사이드바 백드롭 (모바일) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ── TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <button class="hamburger" onclick="openSidebar()" aria-label="메뉴">☰</button>
+    <div class="brand-icon">🎣</div>
+    <div>
+      <div class="brand-name">HOOKED</div>
+      <div class="brand-sub">포케 창업 허브 · 강남구 삼성로 517</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span class="topbar-date" id="todayDate"></span>
+    <button class="btn btn-ghost" onclick="openAddCard()">＋ 페이지 추가</button>
+  </div>
+</div>
+
+<!-- ── TABLET TAB BAR -->
+<div class="tab-bar" id="tabBar"></div>
+
+<div class="layout">
+  <!-- ── SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-close">
+      <span>메뉴</span>
+      <button onclick="closeSidebar()">✕</button>
+    </div>
+    <div class="sidebar-logo">
+      <strong>HOOKED 창업 허브</strong>
+      개업 준비 · 운영 관리 통합 도구
+    </div>
+    <div class="sidebar-label">메뉴</div>
+    <div id="folderList"></div>
+  </div>
+
+  <!-- ── MAIN -->
+  <div class="main">
+    <div class="main-header">
+      <div class="main-title" id="mainTitle">전체</div>
+      <div class="main-count" id="mainCount"></div>
+    </div>
+    <div class="grid" id="cardsGrid"></div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV (모바일) -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-inner" id="bottomNavInner"></div>
+</nav>
+
+<!-- ── 카드 추가 모달 -->
+<div class="overlay" id="editOverlay" onclick="if(event.target===this)closeEdit()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2 id="editTitle_h">페이지 추가</h2>
+      <p>카드 정보를 입력하세요</p>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">제목</label>
+        <input class="form-input" id="f_title" placeholder="예: 매출 분석 도구">
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <input class="form-input" id="f_desc" placeholder="어떤 툴인지 간단히 설명해주세요">
+      </div>
+      <div class="form-group">
+        <label class="form-label">파일명 (같은 폴더의 HTML 파일)</label>
+        <input class="form-input" id="f_file" placeholder="예: analysis.html">
+      </div>
+      <div class="form-group">
+        <label class="form-label">아이콘</label>
+        <input class="form-input" id="f_icon" placeholder="예: 📊" maxlength="4" style="font-size:22px">
+      </div>
+      <div class="form-group">
+        <label class="form-label">폴더</label>
+        <select class="form-input" id="f_folder"></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeEdit()">취소</button>
+      <button class="btn btn-primary" onclick="saveCard()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 뷰어 모달 -->
+<div class="overlay" id="viewerOverlay" onclick="if(event.target===this)closeViewer()">
+  <div class="viewer-modal">
+    <div class="viewer-head">
+      <div class="viewer-head-left">
+        <span class="viewer-folder-tag" id="viewerFolder"></span>
+        <div class="viewer-title" id="viewerTitle"></div>
+      </div>
+      <button class="btn btn-outline" onclick="closeViewer()" style="flex-shrink:0">✕ 닫기</button>
+    </div>
+    <div class="viewer-body" id="viewerBody"></div>
+  </div>
+</div>
+
+<script>
+/* ═══ 폴더 색상 ═══ */
+const FOLDER_COLORS = {
+  all:     '#a09890',
+  finance: '#2d7d4f',
+  startup: '#FF6B35',
+  hr:      '#2756a8',
+};
+
+/* ═══ 폴더 아이콘 (하단탭용) ═══ */
+const FOLDER_ICONS = {
+  all:     '🏠',
+  finance: '📊',
+  startup: '🏗️',
+  hr:      '👥',
+};
+
+/* ═══ 기본 데이터 ═══ */
+const DEFAULT_STATE = {
+  folders: [
+    { id: 'all',     name: '전체',        fixed: true },
+    { id: 'finance', name: '수익성 분석' },
+    { id: 'startup', name: '창업 준비'   },
+    { id: 'hr',      name: '인사·노무'   },
+  ],
+  cards: [
+    {
+      id: 1, folder: 'finance',
+      title: '손익계산서',
+      desc: '매출·원가·인건비·임대료·배달 수수료까지 월별 실수익을 한눈에 시뮬레이션',
+      file: 'profit.html',
+      icon: '📊', color: '#2d7d4f', colorBg: '#eaf4ee', colorText: '#1e5c38',
+      type: 'view'
+    },
+    {
+      id: 2, folder: 'startup',
+      title: '창업 D-Day 체크리스트',
+      desc: '허가·신고·공사·인테리어·비품까지 개업 전 전체 체크리스트. 캘린더 연동',
+      file: 'checklist.html',
+      icon: '📋', color: '#FF6B35', colorBg: '#fff0e9', colorText: '#b84c1e',
+      type: 'view'
+    },
+    {
+      id: 3, folder: 'startup',
+      title: '간판 · 파사드 목업',
+      desc: 'HOOKED 브랜드 간판 디자인 시안 뷰어. 소재·배색·조명 조합 미리보기',
+      file: 'signage.html',
+      icon: '🏪', color: '#1e7f7c', colorBg: '#e6f4f4', colorText: '#155e5c',
+      type: 'view'
+    },
+    {
+      id: 4, folder: 'hr',
+      title: '인건비 실무 매뉴얼',
+      desc: '최저임금·주휴수당·4대보험·연차 계산까지 소상공인 인건비 A to Z',
+      file: 'labor.html',
+      icon: '📖', color: '#2756a8', colorBg: '#eaf0fb', colorText: '#1e4085',
+      type: 'view'
+    },
+    {
+      id: 5, folder: 'hr',
+      title: '급여명세서 (Excel)',
+      desc: '직원 급여 항목·공제 내역 자동 계산 양식. 다운로드 후 Excel에서 사용',
+      file: 'downloads/HOOKED_급여명세서.xlsx',
+      icon: '📑', color: '#b07d1a', colorBg: '#fdf5e0', colorText: '#8a6010',
+      type: 'download'
+    },
+    {
+      id: 6, folder: 'hr',
+      title: '근로계약서 (알바)',
+      desc: '단기·파트타임 아르바이트용 근로계약서 양식. 다운로드 후 Word에서 사용',
+      file: 'downloads/HOOKED_근로계약서_알바.docx',
+      icon: '📝', color: '#6b3fa0', colorBg: '#f3eefa', colorText: '#522e7a',
+      type: 'download'
+    },
+    {
+      id: 7, folder: 'hr',
+      title: '근로계약서 (정직원)',
+      desc: '정규직·정직원용 근로계약서 양식. 다운로드 후 Word에서 사용',
+      file: 'downloads/HOOKED_근로계약서_정직원.docx',
+      icon: '📄', color: '#6b6456', colorBg: '#f0ede8', colorText: '#4a4238',
+      type: 'download'
+    },
+  ]
+};
+
+/* ═══ 상태 ═══ */
+let S = (() => {
+  try { const v = localStorage.getItem('hooked_hub_v2'); return v ? JSON.parse(v) : null; }
+  catch { return null; }
+})() || JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+let curFolder = 'all';
+const save = () => localStorage.setItem('hooked_hub_v2', JSON.stringify(S));
+
+/* ═══ 날짜 ═══ */
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ko-KR', {
+  year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+});
+
+/* ═══ 사이드바 드로어 (모바일) ═══ */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+/* ═══ 렌더 ═══ */
+function render() { renderSidebar(); renderTabBar(); renderBottomNav(); renderGrid(); }
+
+function renderSidebar() {
+  const el = document.getElementById('folderList');
+  el.innerHTML = '';
+  S.folders.forEach(f => {
+    const cnt = f.id === 'all' ? S.cards.length : S.cards.filter(c => c.folder === f.id).length;
+    const color = FOLDER_COLORS[f.id] || '#6b6456';
+    const icon  = FOLDER_ICONS[f.id]  || '📁';
+    const d = document.createElement('div');
+    d.className = 'folder-item' + (curFolder === f.id ? ' active' : '');
+    d.innerHTML = `
+      <span class="folder-dot" style="background:${color}"></span>
+      <span>${icon} ${f.name}</span>
+      <span class="folder-count">${cnt}</span>`;
+    d.onclick = () => { curFolder = f.id; render(); closeSidebar(); };
+    el.appendChild(d);
+  });
+}
+
+function renderTabBar() {
+  const el = document.getElementById('tabBar');
+  el.innerHTML = '';
+  S.folders.forEach(f => {
+    const cnt = f.id === 'all' ? S.cards.length : S.cards.filter(c => c.folder === f.id).length;
+    const icon = FOLDER_ICONS[f.id] || '📁';
+    const pill = document.createElement('div');
+    pill.className = 'tab-pill' + (curFolder === f.id ? ' active' : '');
+    pill.innerHTML = `${icon} ${f.name} <span class="tab-cnt">${cnt}</span>`;
+    pill.onclick = () => { curFolder = f.id; render(); };
+    el.appendChild(pill);
+  });
+}
+
+function renderBottomNav() {
+  const el = document.getElementById('bottomNavInner');
+  el.innerHTML = '';
+  S.folders.forEach(f => {
+    const icon = FOLDER_ICONS[f.id] || '📁';
+    const shortName = f.name.length > 5 ? f.name.slice(0, 5) + '…' : f.name;
+    const tab = document.createElement('button');
+    tab.className = 'bottom-tab' + (curFolder === f.id ? ' active' : '');
+    tab.innerHTML = `<span class="bottom-tab-icon">${icon}</span><span class="bottom-tab-label">${shortName}</span>`;
+    tab.onclick = () => { curFolder = f.id; render(); };
+    el.appendChild(tab);
+  });
+}
+
+function renderGrid() {
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = '';
+  const folder = S.folders.find(f => f.id === curFolder);
+  document.getElementById('mainTitle').textContent = (FOLDER_ICONS[curFolder] || '') + ' ' + (folder?.name || '전체');
+
+  const list = curFolder === 'all' ? S.cards : S.cards.filter(c => c.folder === curFolder);
+  const dlCount = list.filter(c => c.type === 'download').length;
+  document.getElementById('mainCount').textContent =
+    `총 ${list.length}개` + (dlCount > 0 ? ` · 다운로드 ${dlCount}개 포함` : '');
+
+  const viewCards = list.filter(c => c.type === 'view');
+  const dlCards   = list.filter(c => c.type === 'download');
+
+  viewCards.forEach((card, i) => renderCard(grid, card, i));
+
+  if (dlCards.length > 0 && viewCards.length > 0) {
+    const sep = document.createElement('div');
+    sep.className = 'section-label';
+    sep.textContent = '📎 다운로드 자료';
+    grid.appendChild(sep);
+  }
+  dlCards.forEach((card, i) => renderCard(grid, card, i));
+
+  /* 추가 버튼 */
+  const addD = document.createElement('div');
+  addD.className = 'tool-card';
+  addD.style.cssText = 'border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:150px;color:var(--text3);background:transparent;cursor:pointer;';
+  addD.innerHTML = `<div style="font-size:26px">＋</div><div style="font-size:13px;font-weight:500">페이지 추가</div>`;
+  addD.onmouseenter = () => { addD.style.borderColor='var(--accent)'; addD.style.color='var(--accent)'; addD.style.background='var(--accent-light)'; };
+  addD.onmouseleave = () => { addD.style.borderColor='var(--border2)'; addD.style.color='var(--text3)'; addD.style.background='transparent'; };
+  addD.onclick = openAddCard;
+  grid.appendChild(addD);
+}
+
+function renderCard(grid, card, i) {
+  const isDl = card.type === 'download';
+  const folderName = S.folders.find(f => f.id === card.folder)?.name || '';
+  const d = document.createElement('div');
+  d.className = 'tool-card' + (isDl ? ' download-card' : '');
+  d.style.animationDelay = (i * 0.05) + 's';
+  d.innerHTML = `
+    <div class="color-bar" style="background:${card.color}"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:${card.colorBg}">${card.icon}</div>
+    </div>
+    <div class="card-title">${card.title}</div>
+    <div class="card-desc">${card.desc}</div>
+    <div class="card-footer">
+      <span class="card-badge" style="background:${card.colorBg};color:${card.colorText}">
+        ${isDl ? '⬇️ 다운로드' : '🔗 열기'}
+      </span>
+      <span class="card-arrow">${isDl ? '저장 →' : '열기 →'}</span>
+    </div>`;
+  d.onclick = () => {
+    if (isDl) {
+      const a = document.createElement('a');
+      a.href = card.file;
+      a.download = card.file.split('/').pop();
+      a.click();
+    } else {
+      openViewer(card, folderName);
+    }
+  };
+  grid.appendChild(d);
+}
+
+/* ═══ 뷰어 ═══ */
+function openViewer(card, folderName) {
+  document.getElementById('viewerFolder').textContent = folderName;
+  document.getElementById('viewerTitle').textContent = card.icon + ' ' + card.title;
+  document.getElementById('viewerOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  const body = document.getElementById('viewerBody');
+  body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#aaa;font-size:14px;">불러오는 중...</div>`;
+  fetch(card.file, { method: 'HEAD' })
+    .then(r => { if (r.ok) body.innerHTML = `<iframe src="${card.file}" title="${card.title}"></iframe>`; else noFile(body, card.file); })
+    .catch(() => noFile(body, card.file));
+}
+function noFile(body, f) {
+  body.innerHTML = `<div class="no-file"><div class="no-file-icon">📂</div><h3>파일을 찾을 수 없어요</h3><p>같은 폴더에 <strong>${f}</strong> 파일이 있어야 해요.<br>Netlify에 이 허브와 함께 업로드해주세요.</p></div>`;
+}
+function closeViewer() {
+  document.getElementById('viewerOverlay').classList.remove('show');
+  document.getElementById('viewerBody').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+/* ═══ 카드 추가 ═══ */
+function openAddCard() {
+  document.getElementById('editTitle_h').textContent = '페이지 추가';
+  ['f_title','f_desc','f_file'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f_icon').value = '📄';
+  buildFolderSel(curFolder !== 'all' ? curFolder : (S.folders.find(f => !f.fixed)?.id || ''));
+  document.getElementById('editOverlay').classList.add('show');
+}
+function buildFolderSel(selectedVal) {
+  const el = document.getElementById('f_folder'); el.innerHTML = '';
+  S.folders.filter(f => !f.fixed).forEach(f => {
+    const o = document.createElement('option');
+    o.value = f.id; o.textContent = f.name; o.selected = f.id === selectedVal;
+    el.appendChild(o);
+  });
+}
+function saveCard() {
+  const title  = document.getElementById('f_title').value.trim();
+  const desc   = document.getElementById('f_desc').value.trim();
+  const file   = document.getElementById('f_file').value.trim();
+  const icon   = document.getElementById('f_icon').value.trim() || '📄';
+  const folder = document.getElementById('f_folder').value;
+  if (!title) { document.getElementById('f_title').focus(); return; }
+  if (!file)  { document.getElementById('f_file').focus(); return; }
+  S.cards.push({ id: Date.now(), folder, title, desc, file, icon, color: '#6b6456', colorBg: '#f0ede8', colorText: '#4a4238', type: 'view' });
+  save(); closeEdit(); render();
+}
+function closeEdit() { document.getElementById('editOverlay').classList.remove('show'); }
+
+/* ═══ 단축키 ═══ */
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeViewer(); closeEdit(); closeSidebar(); } });
+
+render();
+</script>
+</body>
+</html>
