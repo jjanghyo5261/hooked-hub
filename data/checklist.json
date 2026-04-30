@@ -1,4 +1,11 @@
 {
-  "checked": {},
-  "saved_at": null
+  "checked": {
+    "t001": true,
+    "t004": true,
+    "t008": true,
+    "t005": false,
+    "t006": true,
+    "t009": true
+  },
+  "saved_at": "2026-04-30T03:28:46.248Z"
 }
