@@ -527,15 +527,23 @@
   .dday-badge .num{font-size:24px}
 
   /* 달력 컴팩트 */
-  .calendar-card{padding:12px;border-radius:14px}
-  .cal-nav{margin-bottom:10px;gap:6px}
+  .calendar-card{padding:10px;border-radius:14px}
+  .cal-nav{margin-bottom:8px;gap:6px}
   .cal-month-title{font-size:15px}
   .cal-nav-btn{width:30px;height:30px;font-size:13px;border-radius:8px}
   .cal-today-btn{padding:5px 10px;font-size:11px}
-  .cal-weekday{font-size:10px;padding:4px 0}
-  .cal-day{border-radius:7px;padding:3px}
+  .cal-weekdays{gap:3px;margin-bottom:4px}
+  .cal-weekday{font-size:10px;padding:3px 0}
+  .cal-grid{gap:3px}
+  .cal-day{
+    aspect-ratio:auto;        /* 정사각형 해제 */
+    height:42px;              /* 고정 높이로 컴팩트화 */
+    border-radius:7px;
+    padding:3px 2px;
+    border-width:1.5px;
+  }
   .cal-day .day-num{font-size:11px}
-  .cal-day .dots{gap:1px;margin-top:2px}
+  .cal-day .dots{gap:1px;margin-top:auto}
   .cal-day .dot{width:4px;height:4px}
 
   /* 범례 숨김 */
@@ -590,11 +598,22 @@
 /* ── RESPONSIVE MOBILE ONLY (≤599px) ── */
 @media(max-width:599px){
   .wrap{padding:10px 8px}
+  .calendar-card{padding:8px;border-radius:12px}
+  .cal-nav{margin-bottom:6px;gap:4px}
   .cal-month-title{font-size:13px}
   .cal-nav-btn{width:26px;height:26px;font-size:12px}
   .cal-today-btn{padding:4px 7px;font-size:10px}
-  .cal-weekday{font-size:9px}
-  .cal-day .day-num{font-size:10px}
+  .cal-weekdays{gap:2px;margin-bottom:3px}
+  .cal-weekday{font-size:9px;padding:2px 0}
+  .cal-grid{gap:2px}
+  .cal-day{
+    height:38px;              /* 모바일에선 더 작게 */
+    border-radius:6px;
+    padding:2px 1px;
+  }
+  .cal-day .day-num{font-size:11px}
+  .cal-day .dots{gap:1px;margin-top:1px}
+  .cal-day .dot{width:3.5px;height:3.5px}
 }
 /* ── RESPONSIVE MOBILE (≤599px) ── */
 @media(max-width:599px){
@@ -612,19 +631,27 @@
   .alert-banner{padding:10px 12px;border-radius:10px;gap:8px}
   .alert-banner .text{font-size:12px}
   .alert-banner .icon{font-size:18px}
-  .required-header{padding:12px 14px}
-  .required-header h2{font-size:13px}
-  .required-body{padding:6px 12px 14px}
-  .req-item{padding:9px 10px;border-radius:8px}
-  .req-title{font-size:12px}
-  .req-meta{font-size:10px;gap:4px}
-  .detail-card{padding:12px;border-radius:12px;min-height:auto}
-  .detail-date{font-size:17px}
-  .task-item{padding:10px 12px;border-radius:10px}
-  .task-title{font-size:13px}
-  .task-check{width:20px;height:20px}
-  .tag{font-size:10px;padding:2px 6px;border-radius:5px}
-  .legal-box,.penalty-box,.contact-box{font-size:11px;padding:9px 11px;border-radius:7px}
+  .required-header{padding:14px 16px}
+  .required-header h2{font-size:14px;line-height:1.4}
+  .required-body{padding:8px 14px 16px}
+  .req-item{padding:12px 14px;border-radius:10px;gap:10px}
+  .req-item input[type="checkbox"], .req-check{width:24px;height:24px;flex-shrink:0}
+  .req-title{font-size:14px;line-height:1.4;margin-bottom:5px}
+  .req-meta{font-size:11px;gap:6px;flex-wrap:wrap}
+  .req-meta .date-tag,.req-meta .overdue-tag,.req-meta .moved-tag{padding:2px 7px}
+
+  .detail-card{padding:14px;border-radius:12px;min-height:auto}
+  .detail-date{font-size:18px}
+
+  /* 체크리스트 항목 — 표준 사이즈 */
+  .task-list{gap:10px}
+  .task-item{padding:14px;border-radius:12px}
+  .task-row{gap:12px}
+  .task-title{font-size:15px;line-height:1.4}
+  .task-title-row{margin-bottom:8px}
+  .task-check{width:26px;height:26px;margin-top:1px}
+  .tag{font-size:11px;padding:3px 8px;border-radius:6px}
+  .legal-box,.penalty-box,.contact-box{font-size:12px;padding:10px 12px;border-radius:8px;line-height:1.5}
 }
 
 </style>
@@ -1551,9 +1578,42 @@ function toggleKeyDates() {
 function scrollToDetail() {
   const panel = document.getElementById('detailPanel');
   if (!panel) return;
-  const top = panel.getBoundingClientRect().top + window.scrollY - 12;
-  window.scrollTo({ top, behavior: 'smooth' });
+  // 헤더 위쪽에 약간 여유 두고 정렬
+  const top = panel.getBoundingClientRect().top + window.scrollY - 8;
+  try {
+    window.scrollTo({ top, behavior: 'smooth' });
+  } catch (e) {
+    window.scrollTo(0, top);
+  }
 }
+
+function scrollToCalendar() {
+  const cal = document.querySelector('.calendar-card');
+  if (!cal) return;
+  const top = cal.getBoundingClientRect().top + window.scrollY - 8;
+  try {
+    window.scrollTo({ top, behavior: 'smooth' });
+  } catch (e) {
+    window.scrollTo(0, top);
+  }
+}
+
+// 모바일 전용: 스크롤 위치에 따라 '달력으로' 부유 버튼 표시
+(function setupBackToCalendar(){
+  if (typeof window === 'undefined') return;
+  function update() {
+    const btn = document.getElementById('backToCalBtn');
+    if (!btn) return;
+    if (window.innerWidth > 980) { btn.style.display = 'none'; return; }
+    const cal = document.querySelector('.calendar-card');
+    if (!cal) { btn.style.display = 'none'; return; }
+    const calBottom = cal.getBoundingClientRect().bottom;
+    btn.style.display = (calBottom < 60) ? 'flex' : 'none';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  document.addEventListener('DOMContentLoaded', update);
+})();
 
 function renderDetail() {
   const panel = document.getElementById('detailPanel');
@@ -1854,18 +1914,172 @@ document.addEventListener('DOMContentLoaded', init);
 
 
 
-<!-- ☁️ Cloud Save Feature (JSONBlob) -->
+<!-- ☁️ Cloud Save (GitHub Contents API) + 달력으로 가기 부유 버튼 -->
 <style>
-#csb-wrap{position:fixed;bottom:82px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-#csb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500}
+#csb-wrap{position:fixed;bottom:18px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+#csb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500;max-width:80vw;overflow:hidden;text-overflow:ellipsis}
 #csb-btn{background:#0f766e;color:#fff;border:none;border-radius:14px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(15,118,110,0.38);transition:all 0.2s;letter-spacing:-0.3px}
 #csb-btn:hover{background:#0d6460;transform:translateY(-1px)}
 #csb-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none}
-@media(max-width:980px){#csb-wrap{bottom:74px;right:12px}}
-@media(max-width:599px){#csb-wrap{bottom:68px;right:10px}#csb-btn{padding:9px 16px;font-size:13px}}
+#backToCalBtn{position:fixed;bottom:18px;left:14px;z-index:9999;display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.97);color:#0f766e;border:1px solid #99f6e4;border-radius:20px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(15,118,110,0.18);font-family:inherit}
+#backToCalBtn:hover{background:#f0fdfa;transform:translateY(-1px)}
+@media(max-width:980px){#csb-wrap{bottom:14px;right:12px}#backToCalBtn{bottom:14px;left:12px}}
+@media(max-width:599px){#csb-wrap{bottom:12px;right:10px}#csb-btn{padding:10px 16px;font-size:13px}#backToCalBtn{bottom:12px;left:10px;padding:8px 12px;font-size:12px}}
 </style>
-<div id="csb-wrap"><div id="csb-badge">불러오는 중...</div><button id="csb-btn" onclick="cloudSave()">저장하기</button></div><script>(function(){var REPO="jjanghyo5261/hooked-hub",FILE="data/checklist.json",API="https://api.github.com/repos/"+REPO+"/contents/"+FILE;function getToken(){var t=localStorage.getItem("hooked_admin_token");if(!t){t=prompt("관리자 코드 입력 (처음 한 번만):");if(t)localStorage.setItem("hooked_admin_token",t);}return t;}window.cloudSave=function(){var btn=document.getElementById("csb-btn"),badge=document.getElementById("csb-badge"),token=getToken();if(!token){badge.textContent="토큰 없음";return;}btn.textContent="저장 중...";btn.disabled=true;var body={checked:state.checked,saved_at:new Date().toISOString()},enc=btoa(unescape(encodeURIComponent(JSON.stringify(body,null,2)))),hdrs={"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"};fetch(API,{headers:hdrs}).then(function(r){return r.json();}).then(function(j){var p={message:"체크리스트 저장",content:enc};if(j.sha)p.sha=j.sha;return fetch(API,{method:"PUT",headers:hdrs,body:JSON.stringify(p)});}).then(function(r){if(r.ok){badge.textContent="저장됨 "+new Date().toLocaleTimeString("ko-KR");}else if(r.status===401||r.status===403){localStorage.removeItem("hooked_admin_token");badge.textContent="토큰 오류";}else{badge.textContent="저장 실패("+r.status+")";}}).catch(function(e){console.error(e);badge.textContent="저장 실패";}).then(function(){btn.textContent="저장하기";btn.disabled=false;});};function cloudLoad(){var badge=document.getElementById("csb-badge");fetch(API,{headers:{"Accept":"application/vnd.github.v3+json","Cache-Control":"no-cache"}}).then(function(r){return r.json();}).then(function(j){if(!j.content){badge.textContent="첫 저장 대기 중";return;}var d=JSON.parse(atob(j.content.replace(/
-/g,"")));if(d.checked&&Object.keys(d.checked).length>0){Object.assign(state.checked,d.checked);saveState();render();badge.textContent="마지막 저장: "+(d.saved_at?new Date(d.saved_at).toLocaleString("ko-KR"):"?");}else{badge.textContent="첫 저장 대기 중";}}).catch(function(){badge.textContent="로컬 상태";});}window.addEventListener("load",function(){setTimeout(cloudLoad,900);});})();</script>
+<button id="backToCalBtn" onclick="scrollToCalendar()" type="button">▲ 달력</button>
+<div id="csb-wrap"><div id="csb-badge">대기 중</div><button id="csb-btn" onclick="cloudSave()">☁ 저장</button></div>
+<script>
+(function(){
+  var REPO  = "jjanghyo5261/hooked-hub";
+  var BRANCH= "main";
+  var FILE  = "data/checklist.json";
+  var API   = "https://api.github.com/repos/"+REPO+"/contents/"+FILE;
+  var RAW   = "https://raw.githubusercontent.com/"+REPO+"/"+BRANCH+"/"+FILE;
+
+  function $(id){ return document.getElementById(id); }
+  function setBadge(t){ var b=$("csb-badge"); if(b) b.textContent=t; }
+
+  function getToken(promptIfMissing){
+    var t = localStorage.getItem("hooked_admin_token");
+    if (!t && promptIfMissing) {
+      t = prompt("관리자 코드 입력 (처음 한 번만):");
+      if (t) localStorage.setItem("hooked_admin_token", t);
+    }
+    return t;
+  }
+
+  // 저장: GitHub Contents API + 토큰 필요
+  window.cloudSave = function(){
+    var btn = $("csb-btn");
+    var token = getToken(true);
+    if (!token) { setBadge("토큰 없음"); return; }
+    btn.textContent = "저장 중…";
+    btn.disabled = true;
+    setBadge("저장 중…");
+
+    var body = { checked: state.checked, saved_at: new Date().toISOString() };
+    var enc  = btoa(unescape(encodeURIComponent(JSON.stringify(body, null, 2))));
+    var hdrs = {
+      "Authorization": "token " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+
+    // 1) 현재 파일 sha 조회 (캐시 우회)
+    fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
+      .then(function(r){ return r.status === 404 ? {} : r.json(); })
+      .then(function(j){
+        var payload = { message: "체크리스트 저장 ("+new Date().toLocaleString("ko-KR")+")", content: enc, branch: BRANCH };
+        if (j && j.sha) payload.sha = j.sha;
+        return fetch(API, { method: "PUT", headers: hdrs, body: JSON.stringify(payload) });
+      })
+      .then(function(r){
+        if (r.ok) {
+          setBadge("✓ 저장됨 " + new Date().toLocaleTimeString("ko-KR"));
+        } else if (r.status === 401 || r.status === 403) {
+          localStorage.removeItem("hooked_admin_token");
+          setBadge("토큰 오류 — 다시 입력 필요");
+        } else if (r.status === 409) {
+          setBadge("충돌 — 새로고침 후 재시도");
+        } else {
+          setBadge("저장 실패 (" + r.status + ")");
+        }
+      })
+      .catch(function(e){
+        console.error("[cloudSave]", e);
+        setBadge("저장 실패 (네트워크)");
+      })
+      .then(function(){
+        btn.textContent = "☁ 저장";
+        btn.disabled = false;
+      });
+  };
+
+  // 불러오기: 1차 raw.githubusercontent (캐시 우회) → 실패 시 API 폴백 (토큰 있으면 사용)
+  function applyData(d, srcLabel){
+    if (!d || !d.checked) { setBadge("첫 저장 대기 중"); return; }
+    if (Object.keys(d.checked).length === 0) { setBadge("첫 저장 대기 중"); return; }
+    try {
+      Object.assign(state.checked, d.checked);
+      if (typeof saveState === "function") saveState();
+      if (typeof render === "function") render();
+    } catch(e){ console.warn("[apply]", e); }
+    var when = d.saved_at ? new Date(d.saved_at).toLocaleString("ko-KR") : "?";
+    setBadge("✓ 동기화됨 · " + when);
+  }
+
+  function tryRaw(){
+    return fetch(RAW + "?t=" + Date.now(), { cache: "no-store" })
+      .then(function(r){
+        if (!r.ok) throw new Error("raw " + r.status);
+        return r.json();
+      });
+  }
+
+  function tryApi(){
+    var token = getToken(false); // 토큰이 있으면 사용, 없으면 익명
+    var hdrs = { "Accept": "application/vnd.github.v3+json" };
+    if (token) hdrs["Authorization"] = "token " + token;
+    return fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
+      .then(function(r){
+        if (!r.ok) throw new Error("api " + r.status);
+        return r.json();
+      })
+      .then(function(j){
+        if (!j.content) throw new Error("api: empty content");
+        var raw = j.content.replace(/\s/g, "");
+        return JSON.parse(decodeURIComponent(escape(atob(raw))));
+      });
+  }
+
+  function cloudLoad(){
+    setBadge("불러오는 중…");
+    tryRaw()
+      .then(function(d){ applyData(d, "raw"); })
+      .catch(function(err){
+        console.warn("[raw 실패, API 폴백]", err.message);
+        return tryApi()
+          .then(function(d){ applyData(d, "api"); })
+          .catch(function(err2){
+            console.warn("[api 실패]", err2.message);
+            // 첫 저장 전이면 정상 케이스
+            if (String(err2.message).indexOf("404") >= 0 || String(err.message).indexOf("404") >= 0) {
+              setBadge("첫 저장 대기 중");
+            } else {
+              setBadge("로컬만 사용 중 (네트워크 확인)");
+            }
+          });
+      });
+  }
+
+  // 페이지 로드 후 자동 불러오기
+  if (document.readyState === "complete") {
+    setTimeout(cloudLoad, 300);
+  } else {
+    window.addEventListener("load", function(){ setTimeout(cloudLoad, 300); });
+  }
+
+  // 다른 기기에서 변경 감지: 30초마다 백그라운드 재확인 (옵션)
+  setInterval(function(){
+    if (document.hidden) return;
+    tryRaw().then(function(d){
+      if (!d || !d.checked) return;
+      // 변경된 키가 있는지 확인
+      var changed = false;
+      for (var k in d.checked) {
+        if (d.checked[k] !== state.checked[k]) { changed = true; break; }
+      }
+      if (changed) {
+        Object.assign(state.checked, d.checked);
+        if (typeof saveState === "function") saveState();
+        if (typeof render === "function") render();
+        var when = d.saved_at ? new Date(d.saved_at).toLocaleTimeString("ko-KR") : "?";
+        setBadge("⟳ 자동 동기화 · " + when);
+      }
+    }).catch(function(){ /* 조용히 무시 */ });
+  }, 30000);
+})();
+</script>
 
 </body>
 </html>
