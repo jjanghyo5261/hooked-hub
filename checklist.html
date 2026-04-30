@@ -2070,7 +2070,7 @@ document.addEventListener('DOMContentLoaded', init);
     try {
       state.checked = Object.assign({}, d.checked);
       if (typeof saveState === "function") saveState();
-      if (typeof render === "function") render();
+      if (typeof renderAll === "function") renderAll();
       if (d.saved_at) localStorage.setItem("hooked_last_synced_at", d.saved_at);
     } catch(e){ console.warn("[apply]", e); }
     var when = d.saved_at ? new Date(d.saved_at).toLocaleString("ko-KR") : "?";
@@ -2170,7 +2170,7 @@ document.addEventListener('DOMContentLoaded', init);
       if (changed) {
         state.checked = Object.assign({}, d.checked);
         if (typeof saveState === "function") saveState();
-        if (typeof render === "function") render();
+        if (typeof renderAll === "function") renderAll();
         var when = d.saved_at ? new Date(d.saved_at).toLocaleTimeString("ko-KR") : "?";
         setBadge("⟳ 자동 동기화 · " + when);
       }
