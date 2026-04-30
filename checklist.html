@@ -1921,13 +1921,22 @@ document.addEventListener('DOMContentLoaded', init);
 #csb-btn{background:#0f766e;color:#fff;border:none;border-radius:14px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(15,118,110,0.38);transition:all 0.2s;letter-spacing:-0.3px}
 #csb-btn:hover{background:#0d6460;transform:translateY(-1px)}
 #csb-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none}
+#csb-reload{background:#fff;color:#0f766e;border:1.5px solid #99f6e4;border-radius:14px;width:42px;height:42px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(15,118,110,0.18);transition:all 0.2s;font-family:inherit}
+#csb-reload:hover{background:#f0fdfa;transform:translateY(-1px) rotate(45deg)}
+#csb-reload:active{transform:rotate(180deg)}
 #backToCalBtn{position:fixed;bottom:18px;left:14px;z-index:9999;display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.97);color:#0f766e;border:1px solid #99f6e4;border-radius:20px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(15,118,110,0.18);font-family:inherit}
 #backToCalBtn:hover{background:#f0fdfa;transform:translateY(-1px)}
 @media(max-width:980px){#csb-wrap{bottom:14px;right:12px}#backToCalBtn{bottom:14px;left:12px}}
 @media(max-width:599px){#csb-wrap{bottom:12px;right:10px}#csb-btn{padding:10px 16px;font-size:13px}#backToCalBtn{bottom:12px;left:10px;padding:8px 12px;font-size:12px}}
 </style>
 <button id="backToCalBtn" onclick="scrollToCalendar()" type="button">▲ 달력</button>
-<div id="csb-wrap"><div id="csb-badge">대기 중</div><button id="csb-btn" onclick="cloudSave()">☁ 저장</button></div>
+<div id="csb-wrap">
+  <div id="csb-badge">대기 중</div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button id="csb-reload" onclick="cloudLoad()" type="button" title="GitHub에서 최신 데이터 다시 불러오기">⟳</button>
+    <button id="csb-btn" onclick="cloudSave()">☁ 저장</button>
+  </div>
+</div>
 <script>
 (function(){
   var REPO  = "jjanghyo5261/hooked-hub";
@@ -1995,17 +2004,21 @@ document.addEventListener('DOMContentLoaded', init);
       });
   };
 
-  // 불러오기: 1차 raw.githubusercontent (캐시 우회) → 실패 시 API 폴백 (토큰 있으면 사용)
+  // 불러오기 우선순위:
+  //   - 토큰 있음 → API 우선 (캐시 없음, 실시간) / raw 폴백
+  //   - 토큰 없음 → raw 우선 (속도) / API 폴백 (익명, 60req/h)
   function applyData(d, srcLabel){
     if (!d || !d.checked) { setBadge("첫 저장 대기 중"); return; }
     if (Object.keys(d.checked).length === 0) { setBadge("첫 저장 대기 중"); return; }
     try {
-      Object.assign(state.checked, d.checked);
+      // 로컬과 병합: 클라우드가 더 최신인 항목만 덮어쓰기 (단순화: 전체 덮어쓰기)
+      state.checked = Object.assign({}, state.checked, d.checked);
       if (typeof saveState === "function") saveState();
       if (typeof render === "function") render();
     } catch(e){ console.warn("[apply]", e); }
     var when = d.saved_at ? new Date(d.saved_at).toLocaleString("ko-KR") : "?";
-    setBadge("✓ 동기화됨 · " + when);
+    var src = srcLabel ? " · " + srcLabel : "";
+    setBadge("✓ 동기화됨 · " + when + src);
   }
 
   function tryRaw(){
@@ -2017,7 +2030,7 @@ document.addEventListener('DOMContentLoaded', init);
   }
 
   function tryApi(){
-    var token = getToken(false); // 토큰이 있으면 사용, 없으면 익명
+    var token = getToken(false);
     var hdrs = { "Accept": "application/vnd.github.v3+json" };
     if (token) hdrs["Authorization"] = "token " + token;
     return fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
@@ -2032,25 +2045,35 @@ document.addEventListener('DOMContentLoaded', init);
       });
   }
 
-  function cloudLoad(){
+  function cloudLoad(force){
     setBadge("불러오는 중…");
-    tryRaw()
-      .then(function(d){ applyData(d, "raw"); })
+    var token = getToken(false);
+    // 토큰 보유 시: API 우선 (실시간, 시차 없음)
+    var primary  = token ? tryApi : tryRaw;
+    var fallback = token ? tryRaw : tryApi;
+    var primaryLabel  = token ? "실시간" : "캐시";
+    var fallbackLabel = token ? "캐시" : "API";
+
+    primary()
+      .then(function(d){ applyData(d, primaryLabel); })
       .catch(function(err){
-        console.warn("[raw 실패, API 폴백]", err.message);
-        return tryApi()
-          .then(function(d){ applyData(d, "api"); })
+        console.warn("[primary 실패, 폴백 시도]", err.message);
+        return fallback()
+          .then(function(d){ applyData(d, fallbackLabel); })
           .catch(function(err2){
-            console.warn("[api 실패]", err2.message);
-            // 첫 저장 전이면 정상 케이스
-            if (String(err2.message).indexOf("404") >= 0 || String(err.message).indexOf("404") >= 0) {
+            console.warn("[fallback 실패]", err2.message);
+            var msg = err.message + " / " + err2.message;
+            if (msg.indexOf("404") >= 0) {
               setBadge("첫 저장 대기 중");
+            } else if (msg.indexOf("403") >= 0) {
+              setBadge("요청 한도 초과 — 잠시 후 재시도");
             } else {
               setBadge("로컬만 사용 중 (네트워크 확인)");
             }
           });
       });
   }
+  window.cloudLoad = cloudLoad; // 수동 새로고침 버튼용
 
   // 페이지 로드 후 자동 불러오기
   if (document.readyState === "complete") {
@@ -2059,25 +2082,43 @@ document.addEventListener('DOMContentLoaded', init);
     window.addEventListener("load", function(){ setTimeout(cloudLoad, 300); });
   }
 
-  // 다른 기기에서 변경 감지: 30초마다 백그라운드 재확인 (옵션)
+  // 다른 기기에서 변경 감지: 토큰 있으면 30초, 없으면 90초 (요청 한도 고려)
+  var pollMs = getToken(false) ? 30000 : 90000;
   setInterval(function(){
     if (document.hidden) return;
-    tryRaw().then(function(d){
+    var t = getToken(false);
+    var fn = t ? tryApi : tryRaw;
+    fn().then(function(d){
       if (!d || !d.checked) return;
-      // 변경된 키가 있는지 확인
+      // 저장 시각 비교가 가장 정확
+      if (d.saved_at) {
+        var lastSeen = localStorage.getItem("hooked_last_synced_at") || "";
+        if (d.saved_at === lastSeen) return; // 변경 없음
+        localStorage.setItem("hooked_last_synced_at", d.saved_at);
+      }
+      // 변경된 키 적용
       var changed = false;
       for (var k in d.checked) {
         if (d.checked[k] !== state.checked[k]) { changed = true; break; }
       }
+      // 로컬에는 있는데 클라우드에 없는 항목도 동기화
+      for (var k2 in state.checked) {
+        if (state.checked[k2] && !d.checked[k2]) { changed = true; break; }
+      }
       if (changed) {
-        Object.assign(state.checked, d.checked);
+        state.checked = Object.assign({}, d.checked);
         if (typeof saveState === "function") saveState();
         if (typeof render === "function") render();
         var when = d.saved_at ? new Date(d.saved_at).toLocaleTimeString("ko-KR") : "?";
         setBadge("⟳ 자동 동기화 · " + when);
       }
     }).catch(function(){ /* 조용히 무시 */ });
-  }, 30000);
+  }, pollMs);
+
+  // 탭이 다시 활성화될 때 즉시 새로고침 (모바일에서 앱 전환 후 돌아왔을 때)
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) cloudLoad();
+  });
 })();
 </script>
 
