@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>HOOKED · 창업 허브</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -816,8 +819,12 @@ function openViewer(card, folderName) {
   document.body.style.overflow = 'hidden';
   const body = document.getElementById('viewerBody');
   body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#aaa;font-size:14px;">불러오는 중...</div>`;
-  fetch(card.file, { method: 'HEAD' })
-    .then(r => { if (r.ok) body.innerHTML = `<iframe src="${card.file}" title="${card.title}"></iframe>`; else noFile(body, card.file); })
+  // 캐시 우회: 매번 최신 HTML을 받도록 타임스탬프 쿼리 추가
+  // (다운로드 파일은 type==='download'라 여기 안 옴)
+  const cacheBust = card.file.indexOf('?') >= 0 ? '&' : '?';
+  const src = card.file + cacheBust + 'v=' + Date.now();
+  fetch(card.file, { method: 'HEAD', cache: 'no-store' })
+    .then(r => { if (r.ok) body.innerHTML = `<iframe src="${src}" title="${card.title}"></iframe>`; else noFile(body, card.file); })
     .catch(() => noFile(body, card.file));
 }
 function noFile(body, f) {
