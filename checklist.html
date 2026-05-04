@@ -1969,9 +1969,38 @@ document.addEventListener('DOMContentLoaded', init);
   var FILE  = "data/checklist.json";
   var API   = "https://api.github.com/repos/"+REPO+"/contents/"+FILE;
   var RAW   = "https://raw.githubusercontent.com/"+REPO+"/"+BRANCH+"/"+FILE;
+  var FETCH_TIMEOUT_MS = 15000; // 15초 — 모바일 셀룰러 네트워크에서 hang 방지
+
+  // 타임아웃이 있는 fetch 래퍼
+  function fetchT(url, opts){
+    opts = opts || {};
+    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    var timer = null;
+    var timed = false;
+    var p = new Promise(function(resolve, reject){
+      if (ctrl) opts.signal = ctrl.signal;
+      timer = setTimeout(function(){
+        timed = true;
+        if (ctrl) try { ctrl.abort(); } catch(e){}
+        reject(new Error("timeout"));
+      }, FETCH_TIMEOUT_MS);
+      fetch(url, opts).then(function(r){
+        clearTimeout(timer);
+        if (!timed) resolve(r);
+      }).catch(function(e){
+        clearTimeout(timer);
+        if (!timed) reject(e);
+      });
+    });
+    return p;
+  }
 
   function $(id){ return document.getElementById(id); }
   function setBadge(t){ var b=$("csb-badge"); if(b) b.textContent=t; }
+  function resetSaveBtn(){
+    var b = $("csb-btn");
+    if (b) { b.textContent = "☁ 저장"; b.disabled = false; }
+  }
   function setSyncStat(text, kind){
     var st = $("syncStat");
     var tm = $("syncTime");
@@ -2003,14 +2032,27 @@ document.addEventListener('DOMContentLoaded', init);
     return t;
   }
 
+  var saving = false;
   // 저장: GitHub Contents API + 토큰 필요
   window.cloudSave = function(){
+    if (saving) {
+      // 이미 저장 중 → 중복 클릭 방지하면서, 30초 이상 매달려있으면 강제 리셋
+      console.warn("[cloudSave] 이미 저장 진행 중");
+      return;
+    }
     var btn = $("csb-btn");
     var token = getToken(true);
     if (!token) { setBadge("토큰 없음"); return; }
-    btn.textContent = "저장 중…";
-    btn.disabled = true;
+    saving = true;
+    if (btn) { btn.textContent = "저장 중…"; btn.disabled = true; }
     setBadge("저장 중…");
+
+    // 안전장치: 25초 후 강제 복구
+    var hardTimer = setTimeout(function(){
+      saving = false;
+      resetSaveBtn();
+      setBadge("저장 응답 없음 — 다시 시도하세요");
+    }, 25000);
 
     var body = { checked: state.checked, saved_at: new Date().toISOString() };
     var enc  = btoa(unescape(encodeURIComponent(JSON.stringify(body, null, 2))));
@@ -2020,13 +2062,12 @@ document.addEventListener('DOMContentLoaded', init);
       "Content-Type": "application/json"
     };
 
-    // 1) 현재 파일 sha 조회 (캐시 우회)
-    fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
+    fetchT(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
       .then(function(r){ return r.status === 404 ? {} : r.json(); })
       .then(function(j){
         var payload = { message: "체크리스트 저장 ("+new Date().toLocaleString("ko-KR")+")", content: enc, branch: BRANCH };
         if (j && j.sha) payload.sha = j.sha;
-        return fetch(API, { method: "PUT", headers: hdrs, body: JSON.stringify(payload) });
+        return fetchT(API, { method: "PUT", headers: hdrs, body: JSON.stringify(payload) });
       })
       .then(function(r){
         if (r.ok) {
@@ -2045,11 +2086,17 @@ document.addEventListener('DOMContentLoaded', init);
       })
       .catch(function(e){
         console.error("[cloudSave]", e);
-        setBadge("저장 실패 (네트워크)");
+        var msg = (e && e.message) || "";
+        if (msg.indexOf("timeout") >= 0) {
+          setBadge("저장 시간 초과 — 다시 시도");
+        } else {
+          setBadge("저장 실패 (네트워크)");
+        }
       })
       .then(function(){
-        btn.textContent = "☁ 저장";
-        btn.disabled = false;
+        clearTimeout(hardTimer);
+        saving = false;
+        resetSaveBtn();
       });
   };
 
@@ -2087,7 +2134,7 @@ document.addEventListener('DOMContentLoaded', init);
   }
 
   function tryRaw(){
-    return fetch(RAW + "?t=" + Date.now(), { cache: "no-store" })
+    return fetchT(RAW + "?t=" + Date.now(), { cache: "no-store" })
       .then(function(r){
         if (!r.ok) throw new Error("raw " + r.status);
         return r.json();
@@ -2098,7 +2145,7 @@ document.addEventListener('DOMContentLoaded', init);
     var token = getToken(false);
     var hdrs = { "Accept": "application/vnd.github.v3+json" };
     if (token) hdrs["Authorization"] = "token " + token;
-    return fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
+    return fetchT(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
       .then(function(r){
         if (!r.ok) throw new Error("api " + r.status);
         return r.json();
@@ -2110,32 +2157,41 @@ document.addEventListener('DOMContentLoaded', init);
       });
   }
 
+  var loading = false;
   function cloudLoad(force){
+    if (loading) { console.warn("[cloudLoad] 이미 진행 중"); return; }
+    loading = true;
     setBadge("불러오는 중…");
     // 항상 API를 1차로 (캐시 없음, 시차 없음)
-    // raw는 403 rate-limit 시에만 폴백으로 사용
+    // raw는 403 rate-limit / 타임아웃 시 폴백
     tryApi()
       .then(function(d){ applyData(d, "실시간"); })
       .catch(function(err){
-        console.warn("[API 실패, raw 폴백]", err.message);
-        if (String(err.message).indexOf("404") >= 0) {
+        console.warn("[API 실패, raw 폴백]", err && err.message);
+        var em = (err && err.message) || "";
+        if (em.indexOf("404") >= 0) {
           setBadge("첫 저장 대기 중");
           return;
         }
         return tryRaw()
           .then(function(d){ applyData(d, "캐시"); })
           .catch(function(err2){
-            console.warn("[raw 실패]", err2.message);
-            var msg = err.message + " / " + err2.message;
+            console.warn("[raw 실패]", err2 && err2.message);
+            var em2 = (err2 && err2.message) || "";
+            var msg = em + " / " + em2;
             if (msg.indexOf("404") >= 0) {
               setBadge("첫 저장 대기 중");
             } else if (msg.indexOf("403") >= 0) {
               setBadge("요청 한도 초과 — 1~2분 후 재시도");
+            } else if (msg.indexOf("timeout") >= 0) {
+              setBadge("불러오기 시간 초과 — ⟳ 버튼 다시 시도");
+              setSyncStat("시간 초과", "error");
             } else {
               setBadge("로컬만 사용 중 (네트워크 확인)");
             }
           });
-      });
+      })
+      .then(function(){ loading = false; });
   }
   window.cloudLoad = cloudLoad; // 수동 새로고침 버튼용
 
@@ -2146,10 +2202,30 @@ document.addEventListener('DOMContentLoaded', init);
     window.addEventListener("load", function(){ setTimeout(cloudLoad, 300); });
   }
 
+  // 응급 복구: 더블탭으로 잠긴 상태 강제 해제
+  var lastBadgeTap = 0;
+  var badgeEl = $("csb-badge");
+  if (badgeEl) {
+    badgeEl.addEventListener("click", function(){
+      var now = Date.now();
+      if (now - lastBadgeTap < 600) {
+        // 더블탭 — 강제 리셋
+        saving = false;
+        loading = false;
+        resetSaveBtn();
+        setBadge("초기화됨 — 다시 시도하세요");
+      }
+      lastBadgeTap = now;
+    });
+    badgeEl.style.cursor = "pointer";
+    badgeEl.title = "더블탭하면 초기화";
+  }
+
   // 다른 기기에서 변경 감지: 항상 API로 (60req/h 한도 내), 60초 주기
   var pollMs = 60000;
   setInterval(function(){
     if (document.hidden) return;
+    if (loading || saving) return;
     tryApi().then(function(d){
       if (!d || !d.checked) return;
       // 저장 시각 비교가 가장 정확
