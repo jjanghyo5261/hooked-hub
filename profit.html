@@ -180,41 +180,59 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
 }
 /* ── RESPONSIVE MOBILE (≤599px) ── */
 @media(max-width:599px){
-  .hd{padding:12px 12px 0}
-  .brand-icon{width:36px;height:36px;font-size:18px}
-  .brand-name{font-size:17px;letter-spacing:2px}
+  /* 헤더 컴팩트 */
+  .hd{padding:10px 12px 0}
+  .hd-top{margin-bottom:10px;gap:8px}
+  .brand-icon{width:32px;height:32px;font-size:16px}
+  .brand-name{font-size:16px;letter-spacing:1.5px}
   .brand-sub{font-size:10px}
-  .hd-btns{gap:6px;flex-wrap:wrap}
-  .btn{padding:7px 11px;font-size:12px}
-  .scen-bar{gap:5px;padding-bottom:10px;flex-wrap:wrap}
-  .btn-scen{font-size:11px;padding:6px 10px}
-  .kpi{flex:none;width:50%}
+  .hd-btns{gap:5px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{padding:6px 10px;font-size:11px}
+  .scen-bar{gap:5px;padding-bottom:8px;flex-wrap:wrap}
+  .scen-lbl{font-size:10px}
+  .btn-scen{font-size:10.5px;padding:5px 9px;line-height:1.2}
+
+  /* KPI 박스 — 4.1천만 같은 값이 잘리지 않게 flex 균등 */
+  .kpi-bar{display:flex;flex-wrap:wrap}
+  .kpi{flex:1 1 50%;width:auto;min-width:0}
   .kpi:nth-child(3),.kpi:nth-child(4),.kpi:nth-child(5){display:none}
-  .kpi-val{font-size:17px}
+  .kpi-val{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .kpi-lbl{font-size:10px}
-  .kpi-sub{font-size:9px}
+  .kpi-sub{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* 본문 */
   .wrap{padding:8px 6px;gap:10px}
   .card{border-radius:10px;overflow:hidden}
-  .sec-hd{padding:10px 12px}
-  .sec-title{font-size:13px;gap:6px;line-height:1.3}
-  .sec-info{font-size:11px}
-  /* 테이블 (가로 스크롤 없이) */
-  .tbl-head,.row{grid-template-columns:8px 1fr 120px 56px 0;padding:0 8px;min-height:46px}
-  .row > div:last-child{display:none}     /* 비고 컬럼 숨김 */
-  .tbl-head > div:last-child{display:none}
+  .sec-hd{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .sec-title{font-size:13px;gap:6px;line-height:1.3;flex:1}
+  .sec-info{font-size:10.5px;color:#94A3B8}
+
+  /* 테이블 행: ri 컬럼 제거, 라벨에 더 많은 공간, 입력칸 130px로 확대 */
+  .tbl-head,.row{grid-template-columns:0 1fr 130px 50px 0;padding:0 8px;min-height:46px;gap:4px}
+  .row > .ri,.tbl-head > div:first-child{display:none}      /* 왼쪽 아이콘 숨김 */
+  .row > div:last-child,.tbl-head > div:last-child{display:none}  /* 비고 컬럼 숨김 */
   .tbl-head{padding:6px 8px;font-size:10px}
-  .rl{font-size:13px;line-height:1.35}
-  .rl small{font-size:10px}
-  .rv{font-size:13px}
-  .rp{font-size:11px}
-  .ri{font-size:10px}
+
+  /* 라벨 — 줄바꿈 자연스럽게 */
+  .rl{font-size:13px;line-height:1.35;word-break:keep-all;overflow-wrap:break-word}
+  .rl small{font-size:10px;color:#94A3B8;display:block;margin-top:2px;line-height:1.3}
+  .rv{font-size:13px;font-weight:700;text-align:right}
+  .rp{font-size:10.5px;color:#94A3B8;text-align:right}
   .row-gr .rv{font-size:16px}
   .row-or .rv{font-size:16px}
-  .row-net .rv{font-size:18px}
-  /* 입력 필드 — iOS 줌 방지를 위해 16px 이상 */
-  .ni{font-size:16px;padding:9px 7px;font-weight:600}
+  .row-net{padding:8px}
+  .row-net .rl{font-size:13px}
+  .row-net .rv{font-size:17px}
+
+  /* 입력 필드 — iOS 줌 방지(16px) + 큰 금액도 들어가는 너비 */
+  .iw{display:flex;align-items:center;gap:2px}
+  .ni{font-size:15px;padding:9px 6px;font-weight:700;min-width:0}
   .ni.pct{font-size:14px}
-  .iu{font-size:11px}
+  .iu{font-size:10px;color:#94A3B8;white-space:nowrap}
+
+  /* 시급 요약 행 — 모바일에선 중복이라 숨김 (알바1·2 섹션에서 각각 표시됨) */
+  .wage-summary-row{display:none}
+
   .cm-grid,.bep-grid{grid-template-columns:1fr}
   .inv-grid,.rec-grid,.tip-grid,.risk-grid{grid-template-columns:1fr}
   .inv-card,.rec-item,.tip-item,.risk-item{border-right:none !important;border-bottom:1px solid #F1F5F9 !important}
@@ -547,7 +565,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
     <div class="rp" id="p-labor-total">-</div>
     <div class="rn">주중 3명 + 주말 2명</div>
   </div>
-  <div class="row row-sub">
+  <div class="row row-sub wage-summary-row">
     <div class="ri"><span class="sdot"></span></div>
     <div class="rl"><span>알바 시급 요약</span><small>아래 알바1·2 섹션에서 각각 입력</small></div>
     <div class="rv" id="v-wage-summary" style="color:#475569;font-size:11px">-</div>
