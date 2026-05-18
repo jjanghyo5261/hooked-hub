@@ -621,9 +621,9 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
     <div class="rl"><span>알바1 1일 근무시간</span><small>주 5일 × 시간</small></div>
-    <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha1-h" type="text" inputmode="decimal" value="3.5" oninput="recalc()" onblur="recalc()"></div></div>
+    <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha1-h" type="text" inputmode="decimal" value="4" oninput="recalc()" onblur="recalc()"></div></div>
     <div class="rp" id="p-ha1-week">-</div>
-    <div class="rn" id="v-ha1-h-note">주 17.5h ≥ 15h → 주휴수당 의무</div>
+    <div class="rn" id="v-ha1-h-note">주 20h ≥ 15h → 주휴수당 의무</div>
   </div>
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
@@ -1663,7 +1663,7 @@ function doReset(){
   setV('i-app-fee-rate',13,false); setV('i-royalty',3,false);
   setV('i-wage',12000,true); setV('i-wage-2',11500,true);
   setV('i-ft-salary',3300000,true); setV('i-ft-prob',90,false);
-  setV('i-ha1-h',3.5,false); setV('i-ha2-h',3.5,false); setV('i-weeks',4.3,false);
+  setV('i-ha1-h',4,false); setV('i-ha2-h',3.5,false); setV('i-weeks',4.3,false);
   setV('i-emp-ins',10.5,false);
   var hol=G('i-ha1-holiday'); if(hol) hol.checked=true;
   setV('i-rent',3550000,true); setV('i-mgmt',400000,true);
