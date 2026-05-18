@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>HOOKED 손익계산서</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -19,6 +22,17 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
 .btn-ghost:hover{background:rgba(255,255,255,0.18)}
 .btn-brand{background:#FF6B35;color:white}
 .btn-brand:hover{background:#E85D2A}
+
+/* 동기화 칩 (헤더 우측) */
+.sync-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.8);cursor:pointer;user-select:none;transition:all 0.2s;font-family:inherit}
+.sync-chip:hover{background:rgba(255,255,255,0.18);color:white}
+.sync-chip strong{color:white;font-weight:700}
+.sync-chip .sync-icon{display:inline-block;transition:transform 0.4s;font-size:13px}
+.sync-chip:hover .sync-icon{transform:rotate(180deg)}
+.sync-chip.fresh{background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.4)}
+.sync-chip.stale{background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.4)}
+.sync-chip.error{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.5)}
+@media(max-width:599px){.sync-chip{font-size:11px;padding:5px 10px}.sync-chip .sync-label{display:none}}
 .btn-scen{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.12);font-size:10px}
 .btn-scen:hover{background:rgba(255,255,255,0.16);color:white}
 .btn-scen.s-red{border-color:rgba(248,113,113,.5);color:#fca5a5}
@@ -135,7 +149,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
 @media(max-width:700px){
   .hd{padding:16px 12px 0}
   .wrap{padding:12px 8px;gap:11px}
-  .tbl-head,.row{grid-template-columns:14px 1fr 118px 60px 78px;padding:0 10px}
+  .tbl-head,.row{grid-template-columns:12px 1fr 130px 64px 78px;padding:0 10px;min-height:48px}
   .tbl-head{padding:5px 10px}
   .kpi{flex:none;width:33.333%}
   .kpi:nth-child(4),.kpi:nth-child(5){display:none}
@@ -149,7 +163,9 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   .risk-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}
 }
 @media(max-width:480px){
-  .tbl-head,.row{grid-template-columns:12px 1fr 100px 52px 65px;padding:0 7px}
+  .tbl-head,.row{grid-template-columns:8px 1fr 120px 56px 0;padding:0 7px}
+  .row > div:last-child{display:none}     /* 비고 컬럼 모바일에서 숨김 */
+  .tbl-head > div:last-child{display:none}
   .kpi{width:50%}.kpi:nth-child(3){display:none}
 }
 
@@ -166,31 +182,39 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
 @media(max-width:599px){
   .hd{padding:12px 12px 0}
   .brand-icon{width:36px;height:36px;font-size:18px}
-  .brand-name{font-size:15px;letter-spacing:2px}
-  .brand-sub{font-size:8px}
-  .hd-btns{gap:4px}
-  .btn{padding:5px 8px;font-size:10px}
-  .scen-bar{gap:4px;padding-bottom:10px;flex-wrap:wrap}
-  .btn-scen{font-size:9px;padding:4px 7px}
+  .brand-name{font-size:17px;letter-spacing:2px}
+  .brand-sub{font-size:10px}
+  .hd-btns{gap:6px;flex-wrap:wrap}
+  .btn{padding:7px 11px;font-size:12px}
+  .scen-bar{gap:5px;padding-bottom:10px;flex-wrap:wrap}
+  .btn-scen{font-size:11px;padding:6px 10px}
   .kpi{flex:none;width:50%}
   .kpi:nth-child(3),.kpi:nth-child(4),.kpi:nth-child(5){display:none}
-  .kpi-val{font-size:14px}
-  .kpi-lbl{font-size:8px}
+  .kpi-val{font-size:17px}
+  .kpi-lbl{font-size:10px}
+  .kpi-sub{font-size:9px}
   .wrap{padding:8px 6px;gap:10px}
   .card{border-radius:10px;overflow:hidden}
-  .sec-hd{padding:8px 10px}
-  .sec-title{font-size:11px;gap:6px}
-  .sec-info{font-size:9px}
-  /* 테이블 가로 스크롤 */
-  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .tbl-head,.row{grid-template-columns:10px 1fr 105px 62px 80px;padding:0 8px;min-width:340px}
-  .tbl-head{padding:5px 8px}
-  .rl{font-size:11px}
-  .rl small{font-size:8px}
-  .rv{font-size:11px}
-  .ri{font-size:8px}
-  .row-gr .rv{font-size:14px}
-  .ni{font-size:11px;padding:6px 6px}
+  .sec-hd{padding:10px 12px}
+  .sec-title{font-size:13px;gap:6px;line-height:1.3}
+  .sec-info{font-size:11px}
+  /* 테이블 (가로 스크롤 없이) */
+  .tbl-head,.row{grid-template-columns:8px 1fr 120px 56px 0;padding:0 8px;min-height:46px}
+  .row > div:last-child{display:none}     /* 비고 컬럼 숨김 */
+  .tbl-head > div:last-child{display:none}
+  .tbl-head{padding:6px 8px;font-size:10px}
+  .rl{font-size:13px;line-height:1.35}
+  .rl small{font-size:10px}
+  .rv{font-size:13px}
+  .rp{font-size:11px}
+  .ri{font-size:10px}
+  .row-gr .rv{font-size:16px}
+  .row-or .rv{font-size:16px}
+  .row-net .rv{font-size:18px}
+  /* 입력 필드 — iOS 줌 방지를 위해 16px 이상 */
+  .ni{font-size:16px;padding:9px 7px;font-weight:600}
+  .ni.pct{font-size:14px}
+  .iu{font-size:11px}
   .cm-grid,.bep-grid{grid-template-columns:1fr}
   .inv-grid,.rec-grid,.tip-grid,.risk-grid{grid-template-columns:1fr}
   .inv-card,.rec-item,.tip-item,.risk-item{border-right:none !important;border-bottom:1px solid #F1F5F9 !important}
@@ -209,6 +233,11 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
       </div>
     </div>
     <div class="hd-btns">
+      <div class="sync-chip" id="syncStat" onclick="cloudLoad()" title="클릭 시 GitHub에서 최신 입력값 다시 불러오기">
+        <span class="sync-icon">⟳</span>
+        <span class="sync-label">동기화:</span>
+        <strong id="syncTime">대기 중</strong>
+      </div>
       <button class="btn btn-ghost" onclick="doReset()">&#x21BA; 초기화</button>
       <button class="btn btn-brand" onclick="doCSV()">&#x2193; CSV</button>
     </div>
@@ -1628,18 +1657,288 @@ window.onload=function(){recalc();};
 
 
 
-<!-- ☁️ Cloud Save Feature (JSONBlob) -->
+<!-- ☁️ Cloud Save (GitHub Contents API) — 강화 버전 -->
 <style>
-#csb-wrap{position:fixed;bottom:82px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-#csb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500}
+#csb-wrap{position:fixed;bottom:18px;right:14px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+#csb-badge{background:rgba(255,255,255,0.97);border:1px solid #e2e8f0;border-radius:20px;padding:5px 13px;font-size:11px;color:#475569;box-shadow:0 2px 10px rgba(0,0,0,0.09);white-space:nowrap;font-weight:500;max-width:80vw;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 #csb-btn{background:#1d4ed8;color:#fff;border:none;border-radius:14px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(29,78,216,0.38);transition:all 0.2s;letter-spacing:-0.3px}
 #csb-btn:hover{background:#1e40af;transform:translateY(-1px)}
 #csb-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none}
-@media(max-width:980px){#csb-wrap{bottom:74px;right:12px}}
-@media(max-width:599px){#csb-wrap{bottom:68px;right:10px}#csb-btn{padding:9px 16px;font-size:13px}}
+#csb-reload{background:#fff;color:#1d4ed8;border:1.5px solid #93c5fd;border-radius:14px;width:42px;height:42px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(29,78,216,0.18);transition:all 0.2s;font-family:inherit}
+#csb-reload:hover{background:#eff6ff;transform:translateY(-1px) rotate(45deg)}
+@media(max-width:980px){#csb-wrap{bottom:14px;right:12px}}
+@media(max-width:599px){#csb-wrap{bottom:12px;right:10px}#csb-btn{padding:10px 16px;font-size:13px}}
 </style>
-<div id="csb-wrap"><div id="csb-badge">불러오는 중...</div><button id="csb-btn" onclick="cloudSave()">저장하기</button></div><script>(function(){var REPO="jjanghyo5261/hooked-hub",FILE="data/profit.json",API="https://api.github.com/repos/"+REPO+"/contents/"+FILE;function getToken(){var t=localStorage.getItem("hooked_admin_token");if(!t){t=prompt("관리자 코드 입력 (처음 한 번만):");if(t)localStorage.setItem("hooked_admin_token",t);}return t;}window.cloudSave=function(){var btn=document.getElementById("csb-btn"),badge=document.getElementById("csb-badge"),token=getToken();if(!token){badge.textContent="토큰 없음";return;}btn.textContent="저장 중...";btn.disabled=true;var rows=[];document.querySelectorAll("#profit-tbody tr").forEach(function(tr){var c=tr.querySelectorAll("td");if(c.length>=3)rows.push({item:c[0].innerText,amount:c[1].innerText,note:c[2].innerText});});var body={items:rows,saved_at:new Date().toISOString()},enc=btoa(unescape(encodeURIComponent(JSON.stringify(body,null,2)))),hdrs={"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"};fetch(API,{headers:hdrs}).then(function(r){return r.json();}).then(function(j){var p={message:"수익현황 저장",content:enc};if(j.sha)p.sha=j.sha;return fetch(API,{method:"PUT",headers:hdrs,body:JSON.stringify(p)});}).then(function(r){if(r.ok){badge.textContent="저장됨 "+new Date().toLocaleTimeString("ko-KR");}else if(r.status===401||r.status===403){localStorage.removeItem("hooked_admin_token");badge.textContent="토큰 오류";}else{badge.textContent="저장 실패("+r.status+")";}}).catch(function(e){console.error(e);badge.textContent="저장 실패";}).then(function(){btn.textContent="저장하기";btn.disabled=false;});};function cloudLoad(){var badge=document.getElementById("csb-badge");fetch(API,{headers:{"Accept":"application/vnd.github.v3+json","Cache-Control":"no-cache"}}).then(function(r){return r.json();}).then(function(j){if(!j.content){badge.textContent="첫 저장 대기 중";return;}var d=JSON.parse(atob(j.content.replace(/
-/g,"")));if(d.items&&d.items.length>0){var tbody=document.getElementById("profit-tbody");if(tbody){tbody.innerHTML="";d.items.forEach(function(row){var tr=document.createElement("tr");tr.innerHTML="<td contenteditable>"+row.item+"</td><td contenteditable>"+row.amount+"</td><td contenteditable>"+row.note+"</td>";tbody.appendChild(tr);});}badge.textContent="마지막 저장: "+(d.saved_at?new Date(d.saved_at).toLocaleString("ko-KR"):"?");}else{badge.textContent="첫 저장 대기 중";}}).catch(function(){badge.textContent="로컬 상태";});}window.addEventListener("load",function(){setTimeout(cloudLoad,900);});})();</script>
+<div id="csb-wrap">
+  <div id="csb-badge" title="더블탭하면 초기화">대기 중</div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button id="csb-reload" onclick="cloudLoad()" type="button" title="GitHub에서 최신 입력값 다시 불러오기">⟳</button>
+    <button id="csb-btn" onclick="cloudSave()">☁ 저장</button>
+  </div>
+</div>
+<script>
+(function(){
+  var REPO  = "jjanghyo5261/hooked-hub";
+  var BRANCH= "main";
+  var FILE  = "data/profit.json";
+  var API   = "https://api.github.com/repos/"+REPO+"/contents/"+FILE;
+  var RAW   = "https://raw.githubusercontent.com/"+REPO+"/"+BRANCH+"/"+FILE;
+  var FETCH_TIMEOUT_MS = 15000;
+
+  function fetchT(url, opts){
+    opts = opts || {};
+    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    var timer = null, timed = false;
+    return new Promise(function(resolve, reject){
+      if (ctrl) opts.signal = ctrl.signal;
+      timer = setTimeout(function(){
+        timed = true;
+        if (ctrl) try { ctrl.abort(); } catch(e){}
+        reject(new Error("timeout"));
+      }, FETCH_TIMEOUT_MS);
+      fetch(url, opts).then(function(r){
+        clearTimeout(timer);
+        if (!timed) resolve(r);
+      }).catch(function(e){
+        clearTimeout(timer);
+        if (!timed) reject(e);
+      });
+    });
+  }
+
+  function $(id){ return document.getElementById(id); }
+  function setBadge(t){ var b=$("csb-badge"); if(b) b.textContent=t; }
+  function setSyncStat(text, kind){
+    var st = $("syncStat"), tm = $("syncTime");
+    if (tm) tm.textContent = text;
+    if (st){ st.classList.remove("fresh","stale","error"); if(kind) st.classList.add(kind); }
+  }
+  function fmtTime(iso){
+    if (!iso) return "?";
+    try {
+      var d = new Date(iso), now = new Date();
+      var sameDay = d.toDateString() === now.toDateString();
+      if (sameDay) return "오늘 " + d.toLocaleTimeString("ko-KR", {hour:"2-digit", minute:"2-digit"});
+      return (d.getMonth()+1) + "/" + d.getDate() + " " + d.toLocaleTimeString("ko-KR", {hour:"2-digit", minute:"2-digit"});
+    } catch(e){ return "?"; }
+  }
+  function resetSaveBtn(){ var b=$("csb-btn"); if(b){ b.textContent="☁ 저장"; b.disabled=false; } }
+
+  function getToken(promptIfMissing){
+    var t = localStorage.getItem("hooked_admin_token");
+    if (!t && promptIfMissing) {
+      t = prompt("관리자 코드 입력 (처음 한 번만):");
+      if (t) localStorage.setItem("hooked_admin_token", t);
+    }
+    return t;
+  }
+
+  // 입력값 수집: 모든 .ni 클래스 입력 (id 기준)
+  function collectInputs(){
+    var inputs = document.querySelectorAll("input.ni");
+    var data = {};
+    inputs.forEach(function(el){
+      if (el.id) data[el.id] = el.value;
+    });
+    // 활성 프리셋 (있으면 수집)
+    var activePreset = document.querySelector(".btn-scen.active");
+    if (activePreset) data.__preset = activePreset.textContent.trim();
+    return data;
+  }
+
+  // 입력값 복원: id별로 채우고 recalc 호출
+  function applyInputs(data){
+    if (!data || typeof data !== "object") return false;
+    var changed = 0;
+    Object.keys(data).forEach(function(k){
+      if (k.indexOf("_") === 0) return; // 메타 필드 건너뛰기
+      var el = document.getElementById(k);
+      if (el && typeof data[k] !== "undefined") {
+        if (el.value !== data[k]) {
+          el.value = data[k];
+          changed++;
+        }
+      }
+    });
+    if (typeof recalc === "function") {
+      try { recalc(); } catch(e){ console.warn("[recalc]", e); }
+    }
+    return changed > 0;
+  }
+
+  var saving = false, loading = false;
+
+  // 저장
+  window.cloudSave = function(){
+    if (saving) return;
+    var btn = $("csb-btn");
+    var token = getToken(true);
+    if (!token) { setBadge("토큰 없음"); return; }
+    saving = true;
+    if (btn) { btn.textContent = "저장 중…"; btn.disabled = true; }
+    setBadge("저장 중…");
+
+    var hardTimer = setTimeout(function(){
+      saving = false; resetSaveBtn();
+      setBadge("저장 응답 없음 — 다시 시도하세요");
+    }, 25000);
+
+    var body = { inputs: collectInputs(), saved_at: new Date().toISOString() };
+    var enc = btoa(unescape(encodeURIComponent(JSON.stringify(body, null, 2))));
+    var hdrs = {
+      "Authorization": "token " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+
+    fetchT(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache: "no-store" })
+      .then(function(r){ return r.status === 404 ? {} : r.json(); })
+      .then(function(j){
+        var payload = { message:"손익계산서 입력값 저장 ("+new Date().toLocaleString("ko-KR")+")", content: enc, branch: BRANCH };
+        if (j && j.sha) payload.sha = j.sha;
+        return fetchT(API, { method:"PUT", headers: hdrs, body: JSON.stringify(payload) });
+      })
+      .then(function(r){
+        if (r.ok) {
+          var nowIso = body.saved_at;
+          setBadge("✓ 저장됨 " + new Date().toLocaleTimeString("ko-KR"));
+          setSyncStat(fmtTime(nowIso) + " (방금 저장)", "fresh");
+          localStorage.setItem("hooked_profit_synced_at", nowIso);
+        } else if (r.status === 401 || r.status === 403) {
+          localStorage.removeItem("hooked_admin_token");
+          setBadge("토큰 오류 — 다시 입력 필요");
+        } else if (r.status === 409) {
+          setBadge("충돌 — 새로고침 후 재시도");
+        } else {
+          setBadge("저장 실패 (" + r.status + ")");
+        }
+      })
+      .catch(function(e){
+        console.error("[cloudSave]", e);
+        var msg = (e && e.message) || "";
+        setBadge(msg.indexOf("timeout") >= 0 ? "저장 시간 초과 — 다시 시도" : "저장 실패 (네트워크)");
+      })
+      .then(function(){
+        clearTimeout(hardTimer);
+        saving = false;
+        resetSaveBtn();
+      });
+  };
+
+  // 불러오기
+  function tryRaw(){
+    return fetchT(RAW + "?t=" + Date.now(), { cache:"no-store" })
+      .then(function(r){
+        if (!r.ok) throw new Error("raw " + r.status);
+        return r.json();
+      });
+  }
+  function tryApi(){
+    var token = getToken(false);
+    var hdrs = { "Accept":"application/vnd.github.v3+json" };
+    if (token) hdrs["Authorization"] = "token " + token;
+    return fetchT(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: hdrs, cache:"no-store" })
+      .then(function(r){
+        if (!r.ok) throw new Error("api " + r.status);
+        return r.json();
+      })
+      .then(function(j){
+        if (!j.content) throw new Error("api: empty content");
+        var raw = j.content.replace(/\s/g, "");
+        return JSON.parse(decodeURIComponent(escape(atob(raw))));
+      });
+  }
+
+  function applyData(d, srcLabel){
+    if (!d || (!d.inputs && !d.items)) {
+      setBadge("첫 저장 대기 중");
+      setSyncStat("아직 없음", null);
+      return;
+    }
+    var inputs = d.inputs || {};
+    if (Object.keys(inputs).length === 0) {
+      setBadge("첫 저장 대기 중");
+      setSyncStat("아직 없음", null);
+      return;
+    }
+    applyInputs(inputs);
+    var when = d.saved_at ? new Date(d.saved_at).toLocaleString("ko-KR") : "?";
+    var src = srcLabel ? " · " + srcLabel : "";
+    setBadge("✓ 동기화됨 · " + when + src);
+    var freshness = "fresh";
+    if (d.saved_at) {
+      var ageMin = (Date.now() - new Date(d.saved_at).getTime()) / 60000;
+      if (ageMin > 60) freshness = null;
+    }
+    setSyncStat(fmtTime(d.saved_at) + " (" + (srcLabel||"-") + ")", freshness);
+    if (d.saved_at) localStorage.setItem("hooked_profit_synced_at", d.saved_at);
+  }
+
+  window.cloudLoad = function(){
+    if (loading) return;
+    loading = true;
+    setBadge("불러오는 중…");
+    tryApi()
+      .then(function(d){ applyData(d, "실시간"); })
+      .catch(function(err){
+        var em = (err && err.message) || "";
+        if (em.indexOf("404") >= 0) { setBadge("첫 저장 대기 중"); setSyncStat("아직 없음", null); return; }
+        return tryRaw()
+          .then(function(d){ applyData(d, "캐시"); })
+          .catch(function(err2){
+            var em2 = (err2 && err2.message) || "";
+            var msg = em + " / " + em2;
+            if (msg.indexOf("404") >= 0) { setBadge("첫 저장 대기 중"); setSyncStat("아직 없음", null); }
+            else if (msg.indexOf("403") >= 0) { setBadge("요청 한도 초과 — 1~2분 후 재시도"); setSyncStat("한도 초과", "stale"); }
+            else if (msg.indexOf("timeout") >= 0) { setBadge("불러오기 시간 초과 — ⟳ 다시 시도"); setSyncStat("시간 초과", "error"); }
+            else { setBadge("로컬만 사용 중 (네트워크 확인)"); setSyncStat("오프라인", "stale"); }
+          });
+      })
+      .then(function(){ loading = false; });
+  };
+
+  // 페이지 로드 후 자동
+  if (document.readyState === "complete") {
+    setTimeout(window.cloudLoad, 400);
+  } else {
+    window.addEventListener("load", function(){ setTimeout(window.cloudLoad, 400); });
+  }
+
+  // 다른 기기 변경 감지: 60초 주기
+  setInterval(function(){
+    if (document.hidden || loading || saving) return;
+    tryApi().then(function(d){
+      if (!d || !d.saved_at) return;
+      var lastSeen = localStorage.getItem("hooked_profit_synced_at") || "";
+      if (d.saved_at === lastSeen) return;
+      applyInputs(d.inputs || {});
+      localStorage.setItem("hooked_profit_synced_at", d.saved_at);
+      setBadge("⟳ 자동 동기화 · " + new Date(d.saved_at).toLocaleTimeString("ko-KR"));
+      setSyncStat(fmtTime(d.saved_at) + " (자동)", "fresh");
+    }).catch(function(){});
+  }, 60000);
+
+  // 탭 복귀 시 즉시 새로고침
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden) window.cloudLoad();
+  });
+
+  // 응급 복구: 배지 더블탭
+  var lastTap = 0;
+  var bEl = $("csb-badge");
+  if (bEl) {
+    bEl.addEventListener("click", function(){
+      var now = Date.now();
+      if (now - lastTap < 600) {
+        saving = false; loading = false;
+        resetSaveBtn();
+        setBadge("초기화됨 — 다시 시도하세요");
+      }
+      lastTap = now;
+    });
+  }
+})();
+</script>
 
 </body>
 </html>
