@@ -527,7 +527,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
     <div class="rl"><span>순수 임대료</span><small>삼성역 3번출구 오피스 상권 13평</small></div>
-    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-rent" type="text" inputmode="numeric" value="3,450,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-rent" type="text" inputmode="numeric" value="3,550,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
     <div class="rp" id="p-rent">-</div>
     <div class="rn">직접 입력</div>
   </div>
@@ -549,10 +549,10 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   </div>
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
-    <div class="rl"><span>시급</span><small>2025년 최저임금 기준</small></div>
-    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage" type="text" inputmode="numeric" value="10,030" oninput="recalc()" onblur="fmtC(this);recalc()"><span class="iu">/시</span></div></div>
-    <div class="rp" id="p-wage">-</div>
-    <div class="rn">직접 입력</div>
+    <div class="rl"><span>알바 시급 요약</span><small>아래 알바1·2 섹션에서 각각 입력</small></div>
+    <div class="rv" id="v-wage-summary" style="color:#475569;font-size:11px">-</div>
+    <div class="rp"></div>
+    <div class="rn">읽기 전용</div>
   </div>
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
@@ -572,7 +572,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
     <div class="rl"><span>정직원 월급</span><small>세전 고정급 (주휴 포함)</small></div>
-    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-ft-salary" type="text" inputmode="numeric" value="2,750,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-ft-salary" type="text" inputmode="numeric" value="3,300,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
     <div class="rp" id="p-ft-salary">-</div>
     <div class="rn">직접 입력</div>
   </div>
@@ -604,41 +604,60 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
     <div class="rp"></div><div class="rn">2.5시간 · 비용 없음</div>
   </div>
 
-  <!-- ── 아르바이트1 (월~목) ── -->
+  <!-- ── 아르바이트1 (월~금, 프리랜서 3.3%, 주휴수당) ── -->
   <div class="row row-sub" style="background:#FFF8F8">
     <div class="ri" style="color:#EF4444;font-size:9px">알바1</div>
-    <div class="rl" style="color:#B91C1C;font-weight:600"><span>📅 알바1 (월~목)</span><small>09:30~13:00 · 주 14h → 주휴수당 없음</small></div>
+    <div class="rl" style="color:#B91C1C;font-weight:600"><span>📅 알바1 (월~금)</span><small>주 5일 · 프리랜서 3.3% · 4대보험 없음</small></div>
     <div class="rv" id="v-ha1-base" style="color:#B91C1C">-</div>
-    <div class="rp"></div><div class="rn">주 4일 · 4대보험 없음</div>
+    <div class="rp"></div><div class="rn" id="v-ha1-note">주휴수당 포함</div>
   </div>
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
-    <div class="rl"><span>알바1 1일 근무시간</span><small>09:30~13:00</small></div>
+    <div class="rl"><span>알바1 시급</span><small>2026년 시급</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage" type="text" inputmode="numeric" value="12,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-wage">-</div>
+    <div class="rn">주중 알바</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>알바1 1일 근무시간</span><small>주 5일 × 시간</small></div>
     <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha1-h" type="text" inputmode="decimal" value="3.5" oninput="recalc()" onblur="recalc()"></div></div>
-    <div class="rp"></div>
-    <div class="rn">주 14h → 주휴 없음</div>
+    <div class="rp" id="p-ha1-week">-</div>
+    <div class="rn" id="v-ha1-h-note">주 17.5h ≥ 15h → 주휴수당 의무</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>주휴수당 적용</span><small>주 15h 이상이면 법정 의무</small></div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;padding:0 8px">
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:600;color:#B91C1C">
+        <input type="checkbox" id="i-ha1-holiday" checked oninput="recalc()" style="width:16px;height:16px;accent-color:#B91C1C;cursor:pointer">
+        적용 (×1.2배)
+      </label>
+    </div>
+    <div class="rp" id="p-ha1-holiday">-</div>
+    <div class="rn">1주 1일치 추가 임금</div>
   </div>
 
-  <!-- ── 아르바이트2 (금토일) ── -->
+  <!-- ── 아르바이트2 (토일, 프리랜서) ── -->
   <div class="row row-sub" style="background:#FFF7ED">
     <div class="ri" style="color:#F59E0B;font-size:9px">알바2</div>
-    <div class="rl" style="color:#B45309;font-weight:600"><span>📅 알바2 (금토일)</span><small>09:30~13:00 · 주 10.5h → 주휴수당 없음</small></div>
+    <div class="rl" style="color:#B45309;font-weight:600"><span>📅 알바2 (토·일)</span><small>주 2일 · 프리랜서 3.3% · 4대보험 없음</small></div>
     <div class="rv" id="v-ha2-base" style="color:#B45309">-</div>
-    <div class="rp"></div><div class="rn">주 3일 · 4대보험 없음</div>
+    <div class="rp"></div><div class="rn">주말 알바</div>
   </div>
   <div class="row row-sub">
     <div class="ri"><span class="sdot"></span></div>
-    <div class="rl"><span>알바2 1일 근무시간</span><small>09:30~13:00</small></div>
+    <div class="rl"><span>알바2 시급</span><small>2026년 시급</small></div>
+    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage-2" type="text" inputmode="numeric" value="11,500" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
+    <div class="rp" id="p-wage-2">-</div>
+    <div class="rn">주말 알바</div>
+  </div>
+  <div class="row row-sub">
+    <div class="ri"><span class="sdot"></span></div>
+    <div class="rl"><span>알바2 1일 근무시간</span><small>토·일 2일 × 시간</small></div>
     <div><div class="iw"><span class="iu">시간</span><input class="ni" id="i-ha2-h" type="text" inputmode="decimal" value="3.5" oninput="recalc()" onblur="recalc()"></div></div>
-    <div class="rp"></div>
-    <div class="rn">주 10.5h → 주휴 없음</div>
-  </div>
-  <div class="row row-sub">
-    <div class="ri"><span class="sdot"></span></div>
-    <div class="rl"><span>알바 시급</span><small>2025년 최저임금</small></div>
-    <div><div class="iw"><span class="iu">₩</span><input class="ni" id="i-wage" type="text" inputmode="numeric" value="10,030" oninput="recalc()" onblur="fmtC(this);recalc()"></div></div>
-    <div class="rp" id="p-wage">-</div>
-    <div class="rn">알바1·2 공통</div>
+    <div class="rp" id="p-ha2-week">-</div>
+    <div class="rn">주 7h &lt; 15h → 주휴 없음</div>
   </div>
 
   <!-- 기타 고정비 -->
@@ -990,17 +1009,22 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   <div class="inv-grid" style="grid-template-columns:repeat(2,1fr)">
     <div class="inv-card">
       <div class="inv-lbl"><span class="inv-dot" style="background:#EF4444"></span>주방집기 (본사 공급)</div>
-      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-equip" type="text" inputmode="numeric" value="13,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-equip" type="text" inputmode="numeric" value="11,300,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
       <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 월 상각 <span id="v-equip-dep" style="color:#475569;font-weight:600">-</span> / 48개월</div>
     </div>
     <div class="inv-card">
+      <div class="inv-lbl"><span class="inv-dot" style="background:#10B981"></span>기타 집기 (테이블·의자·POS 등)</div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-misc-equip" type="text" inputmode="numeric" value="10,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 월 상각 <span id="v-misc-equip-dep" style="color:#475569;font-weight:600">-</span> / 48개월</div>
+    </div>
+    <div class="inv-card">
       <div class="inv-lbl"><span class="inv-dot" style="background:#F59E0B"></span>인테리어 (추정)</div>
-      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-interior" type="text" inputmode="numeric" value="70,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-interior" type="text" inputmode="numeric" value="57,500,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
       <div style="font-size:9px;color:#94A3B8;margin-top:5px">→ 월 상각 <span id="v-int-dep" style="color:#475569;font-weight:600">-</span> / 48개월</div>
     </div>
     <div class="inv-card">
       <div class="inv-lbl"><span class="inv-dot" style="background:#8B5CF6"></span>권리금</div>
-      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-key" type="text" inputmode="numeric" value="50,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
+      <div class="iw"><span class="iu">₩</span><input class="ni" id="i-key" type="text" inputmode="numeric" value="53,000,000" oninput="recalc()" onblur="fmtC(this);recalc()"></div>
       <div style="font-size:9px;color:#94A3B8;margin-top:4px;display:flex;align-items:center;gap:4px">
         예상 회수율
         <div class="iw" style="display:inline-flex;width:auto;padding:0">
@@ -1217,11 +1241,13 @@ function recalc(){
   var cardR = V('i-card-rate');  // 카드수수료율
   var ar    = V('i-app-fee-rate');// 배달앱 수수료율
   var rr    = V('i-royalty');    // 로열티율
-  var wage  = V('i-wage');       // 시급
+  var wage1 = V('i-wage');       // 알바1 시급 (주중)
+  var wage2 = V('i-wage-2');     // 알바2 시급 (주말)
   var ftSalary = V('i-ft-salary');  // 정직원 월급
   var ftProb   = V('i-ft-prob');    // 수습 지급률(%)
-  var ha1H  = V('i-ha1-h');         // 알바1 1일 시간 (월~목)
-  var ha2H  = V('i-ha2-h');         // 알바2 1일 시간 (금토일)
+  var ha1H  = V('i-ha1-h');         // 알바1 1일 시간 (월~금)
+  var ha2H  = V('i-ha2-h');         // 알바2 1일 시간 (토·일)
+  var ha1Holiday = (function(){var el=G('i-ha1-holiday');return el?el.checked:true;})();
   var weeks = V('i-weeks');          // 영업 주수
   var empIns= V('i-emp-ins');    // 알바 4대보험율
   var rent  = V('i-rent');       // 임대료
@@ -1234,6 +1260,7 @@ function recalc(){
   var basicD= V('i-basic-ded'); // 기본공제
   var yellow= V('i-yellow');     // 노란우산공제
   var equip = V('i-equip');      // 주방집기
+  var miscEquip = V('i-misc-equip'); // 기타 집기
   var intr  = V('i-interior');   // 인테리어
   var key   = V('i-key');        // 권리금
   var keyRec = V('i-key-recovery'); // 권리금 회수율(%)
@@ -1297,15 +1324,21 @@ function recalc(){
   var ftIns  = ftPay * empIns / 100;       // 4대보험 사업주 부담 (정직원만)
   var ftTotal = ftPay + ftIns;
 
-  // 알바1 (월~목, 3.5h/일, 주 14h → 주휴X, 4대보험X)
-  var ha1Days = weeks * 4;                 // 월~목 4일 × 4.3주
-  var ha1Base = wage * ha1H * ha1Days;
+  // 알바1 (월~금, 5일/주, 프리랜서 3.3%)
+  // 주 시간 = 일 시간 × 5
+  // 주 15h 이상이면 주휴수당 의무 (×1.2배)
+  var ha1WeeklyH = ha1H * 5;
+  var ha1Days = weeks * 5;
+  var ha1HolidayMult = (ha1Holiday && ha1WeeklyH >= 15) ? 1.2 : 1;
+  var ha1Base = wage1 * ha1H * ha1Days * ha1HolidayMult;
 
-  // 알바2 (금토일, 3.5h/일, 주 10.5h → 주휴X, 4대보험X)
-  var ha2Days = weeks * 3;                 // 금토일 3일 × 4.3주
-  var ha2Base = wage * ha2H * ha2Days;
+  // 알바2 (토·일, 2일/주, 프리랜서 3.3%)
+  // 주 시간 = 일 시간 × 2 → 주 7h < 15h → 주휴 없음
+  var ha2WeeklyH = ha2H * 2;
+  var ha2Days = weeks * 2;
+  var ha2Base = wage2 * ha2H * ha2Days;
 
-  var empInsAmt = ftIns;                   // 알바는 주 15h 미만 → 4대보험 없음
+  var empInsAmt = ftIns;                   // 알바는 모두 프리랜서 3.3% → 사업주 4대보험 없음
   var laborBase = ftPay + ha1Base + ha2Base;
   var labor = laborBase + ftIns;
 
@@ -1317,10 +1350,11 @@ function recalc(){
 
   // ── 감가상각·상각비 (비현금 비용) ──
   var depEquip = equip / 48;          // 주방집기 48개월 상각
+  var depMiscEquip = miscEquip / 48;  // 기타 집기 48개월 상각
   var depInt   = intr  / 48;          // 인테리어 48개월 상각
   var depKey   = key * (1 - keyRec/100) / 48; // 권리금 순상각 (회수율 차감 후) 48개월
   var depDep   = dep   * 0.03 / 12;   // 보증금 기회비용 연3%
-  var depTotal = depEquip + depInt + depKey + depDep;
+  var depTotal = depEquip + depMiscEquip + depInt + depKey + depDep;
 
   // ── 고정비 합계 ──
   var rentTotal = rent + mgmt;
@@ -1376,14 +1410,14 @@ function recalc(){
   var bepRatio = bepRev>0 ? rev/bepRev*100 : 0;
 
   // ── 초기투자 & 실질 투자회수 ──
-  var totInv  = equip + intr + key + dep;   // 총 초기 투자금 (전액)
+  var totInv  = equip + miscEquip + intr + key + dep;   // 총 초기 투자금 (전액)
   var pb      = netIncome > 0 ? totInv / netIncome : 0;  // 구 방식 (참고용)
 
   // 실질 투자금: 회수 가능 항목 제외
   // - 보증금(dep): 퇴거 시 전액 반환 → 회수 대상 아님
   // - 권리금 회수액(key × keyRec%): 예상 회수분 제외
   var keyNet  = key * (1 - keyRec/100);    // 권리금 순손실분
-  var realInv = equip + intr + keyNet;      // 실질 투자금
+  var realInv = equip + miscEquip + intr + keyNet;      // 실질 투자금
 
   // 월 운영현금흐름(OCF): 순이익 + 비현금 감가상각
   // 감가상각은 현금 지출 없는 비용(초기에 이미 지출) → add-back
@@ -1466,11 +1500,22 @@ function recalc(){
   // 알바1·2
   T('v-ha1-base', W(ha1Base));
   T('v-ha2-base', W(ha2Base));
+  T('p-wage', W(wage1)+'/시');
+  T('p-wage-2', W(wage2)+'/시');
+  T('p-ha1-week', '주 '+(ha1WeeklyH).toFixed(1)+'h');
+  T('p-ha2-week', '주 '+(ha2WeeklyH).toFixed(1)+'h');
+  T('v-wage-summary', '알바1 ₩'+cN(wage1)+'/시 · 알바2 ₩'+cN(wage2)+'/시');
+  // 알바1 주휴수당 상태/주의문구
+  var ha1HolidayActive = (ha1Holiday && ha1WeeklyH >= 15);
+  T('p-ha1-holiday', ha1HolidayActive ? '+ '+W(ha1Base - wage1*ha1H*ha1Days) : '없음');
+  T('v-ha1-note', ha1HolidayActive ? '주휴수당 포함 (×1.2)' : '주휴수당 미적용');
+  T('v-ha1-h-note', ha1WeeklyH >= 15
+    ? '주 '+ha1WeeklyH.toFixed(1)+'h ≥ 15h → 주휴수당 의무'
+    : '주 '+ha1WeeklyH.toFixed(1)+'h < 15h → 주휴 없음');
   // 4대보험 (정직원만)
-  T('p-emp-ins', Pct(ftIns,rev)); T('v-ft-ins-note', W(ftIns)+'(정직원만)');
+  T('p-emp-ins', Pct(ftIns,rev)); T('v-ft-ins-note', W(ftIns)+'(정직원만, 알바는 프리랜서 3.3%)');
   // 합계
   T('v-labor-total', W(labor)); T('p-labor-total', Pct(labor,rev));
-  T('p-wage', '알바1 월~목 '+ha1H+'h×4일 / 알바2 금토일 '+ha2H+'h×3일');
   T('v-etc-total', W(etcFx)); T('p-etc-total', Pct(etcFx,rev));
   T('p-util', Pct(util,rev)); T('p-comm', Pct(comm,rev));
   T('p-app-fixed', Pct(appFx,rev)); T('p-misc', Pct(misc,rev));
@@ -1535,7 +1580,8 @@ function recalc(){
   T('bep-margin-count', (currCount-bepCount)>0?'+ '+cN(currCount-bepCount)+'명 여유':'-'+cN(bepCount-currCount)+'명 부족');
 
   // 초기투자
-  T('v-equip-dep', W(depEquip)); T('v-int-dep', W(depInt));
+  T('v-equip-dep', W(depEquip)); T('v-misc-equip-dep', W(depMiscEquip));
+  T('v-int-dep', W(depInt));
   T('v-key-dep',   W(depKey));   T('v-dep-opp', W(depDep));
   T('v-total-inv', W(totInv));
 
@@ -1580,11 +1626,11 @@ function recalc(){
 // ── 시나리오 Preset ──
 var SCEN = {
   '보수': {price:13000,countWD:50,countWE:25,wPrice:13000,wCountWD:12,wCountWE:6,dp:13000,dcWD:18,dcWE:12,days:26.1,
-            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+            rent:3550000,mgmt:400000,interior:57500000,key:53000000,keyRecovery:50,deposit:70000000},
   '기본': {price:13000,countWD:80,countWE:40,wPrice:13000,wCountWD:20,wCountWE:10,dp:13000,dcWD:30,dcWE:20,days:26.1,
-            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+            rent:3550000,mgmt:400000,interior:57500000,key:53000000,keyRecovery:50,deposit:70000000},
   '낙관': {price:13000,countWD:110,countWE:55,wPrice:13000,wCountWD:30,wCountWE:15,dp:13000,dcWD:45,dcWE:30,days:26.1,
-            rent:3450000,mgmt:400000,interior:70000000,key:50000000,keyRecovery:50,deposit:70000000},
+            rent:3550000,mgmt:400000,interior:57500000,key:53000000,keyRecovery:50,deposit:70000000},
 };
 function setV(id,v,comma){
   var el=G(id); if(!el)return;
@@ -1615,16 +1661,19 @@ function doReset(){
   setV('i-days',26.1,false);
   setV('i-cogs-rate',32,false); setV('i-card-rate',1.5,false);
   setV('i-app-fee-rate',13,false); setV('i-royalty',3,false);
-  setV('i-wage',10030,true); setV('i-ft-salary',2750000,true); setV('i-ft-prob',90,false);
+  setV('i-wage',12000,true); setV('i-wage-2',11500,true);
+  setV('i-ft-salary',3300000,true); setV('i-ft-prob',90,false);
   setV('i-ha1-h',3.5,false); setV('i-ha2-h',3.5,false); setV('i-weeks',4.3,false);
   setV('i-emp-ins',10.5,false);
-  setV('i-rent',3450000,true); setV('i-mgmt',400000,true);
+  var hol=G('i-ha1-holiday'); if(hol) hol.checked=true;
+  setV('i-rent',3550000,true); setV('i-mgmt',400000,true);
   setV('i-util',250000,true); setV('i-comm',50000,true);
   setV('i-app-fixed',88000,true); setV('i-misc',100000,true);
   setV('i-vat-in',400000,true);
   setV('i-basic-ded',1500000,true); setV('i-yellow',12000000,true);
-  setV('i-equip',13000000,true); setV('i-interior',70000000,true);
-  setV('i-key',50000000,true); setV('i-key-recovery',50,false); setV('i-deposit',70000000,true);
+  setV('i-equip',11300000,true); setV('i-misc-equip',10000000,true);
+  setV('i-interior',57500000,true);
+  setV('i-key',53000000,true); setV('i-key-recovery',50,false); setV('i-deposit',70000000,true);
   recalc();
 }
 
@@ -1636,12 +1685,13 @@ function doCSV(){
     ['배달단가','i-del-price'],['주중배달건수','i-del-count-wd'],['토요일배달건수','i-del-count-we'],
     ['영업일','i-days'],['식재료율','i-cogs-rate'],['카드수수료율','i-card-rate'],
     ['배달수수료율','i-app-fee-rate'],['로열티율','i-royalty'],
-    ['시급','i-wage'],['정직원월급','i-ft-salary'],['수습비율','i-ft-prob'],
+    ['알바1시급(주중)','i-wage'],['알바2시급(주말)','i-wage-2'],
+    ['정직원월급','i-ft-salary'],['수습비율','i-ft-prob'],
     ['알바1시간','i-ha1-h'],['알바2시간','i-ha2-h'],['영업주수','i-weeks'],['4대보험율','i-emp-ins'],
     ['임대료','i-rent'],['관리비','i-mgmt'],
     ['전기가스수도','i-util'],['통신','i-comm'],['배달앱정액','i-app-fixed'],['소모품','i-misc'],
     ['매입세액','i-vat-in'],['기본공제','i-basic-ded'],['노란우산','i-yellow'],
-    ['주방집기','i-equip'],['인테리어','i-interior'],['권리금','i-key'],['보증금','i-deposit'],
+    ['주방집기','i-equip'],['기타집기','i-misc-equip'],['인테리어','i-interior'],['권리금','i-key'],['보증금','i-deposit'],
   ];
   for(var i=0;i<ids.length;i++)rows.push([ids[i][0],V(ids[i][1])]);
   var csv=rows.map(function(r){return r.join(',');}).join('\r\n');
