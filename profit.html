@@ -149,8 +149,9 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
 @media(max-width:700px){
   .hd{padding:16px 12px 0}
   .wrap{padding:12px 8px;gap:11px}
-  .tbl-head,.row{grid-template-columns:12px 1fr 130px 64px 78px;padding:0 10px;min-height:48px}
+  .tbl-head,.row{grid-template-columns:12px minmax(0,1fr) 130px 64px 78px;padding:0 10px;min-height:48px}
   .tbl-head{padding:5px 10px}
+  .rl{min-width:0}
   .kpi{flex:none;width:33.333%}
   .kpi:nth-child(4),.kpi:nth-child(5){display:none}
   .cm-grid,.bep-grid{grid-template-columns:1fr 1fr}
@@ -162,10 +163,8 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   .tip-item:nth-child(2n){border-right:none}
   .risk-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}
 }
+/* @media(max-width:480px) 그리드는 599px 미디어쿼리가 모든 처리 — 별도 안 함 */
 @media(max-width:480px){
-  .tbl-head,.row{grid-template-columns:8px 1fr 120px 56px 0;padding:0 7px}
-  .row > div:last-child{display:none}     /* 비고 컬럼 모바일에서 숨김 */
-  .tbl-head > div:last-child{display:none}
   .kpi{width:50%}.kpi:nth-child(3){display:none}
 }
 
@@ -207,15 +206,17 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','Noto San
   .sec-title{font-size:13px;gap:6px;line-height:1.3;flex:1}
   .sec-info{font-size:10.5px;color:#94A3B8}
 
-  /* 테이블 행: ri 컬럼 제거, 라벨에 더 많은 공간, 입력칸 130px로 확대 */
-  .tbl-head,.row{grid-template-columns:0 1fr 130px 50px 0;padding:0 8px;min-height:46px;gap:4px}
-  .row > .ri,.tbl-head > div:first-child{display:none}      /* 왼쪽 아이콘 숨김 */
-  .row > div:last-child,.tbl-head > div:last-child{display:none}  /* 비고 컬럼 숨김 */
-  .tbl-head{padding:6px 8px;font-size:10px}
+  /* 테이블 행: ri 컬럼 제거, 라벨에 더 많은 공간 (minmax(0,1fr)로 압축 방지), 입력칸 130px */
+  .tbl-head,.row{grid-template-columns:minmax(0,1fr) 130px 50px;padding:0 10px;min-height:46px;gap:4px}
+  .row > .ri,.tbl-head > div:first-child{display:none}            /* 왼쪽 아이콘 숨김 */
+  .row > .rn,.tbl-head > div:last-child{display:none}              /* 비고 컬럼 숨김 */
+  .tbl-head{padding:6px 10px;font-size:10px}
 
-  /* 라벨 — 줄바꿈 자연스럽게 */
-  .rl{font-size:13px;line-height:1.35;word-break:keep-all;overflow-wrap:break-word}
+  /* 라벨 — 줄바꿈 자연스럽게 + 압축 안되게 min-width:0 */
+  .rl{font-size:13px;line-height:1.35;word-break:keep-all;overflow-wrap:break-word;min-width:0}
+  .rl span{display:block;word-break:keep-all;overflow-wrap:break-word}
   .rl small{font-size:10px;color:#94A3B8;display:block;margin-top:2px;line-height:1.3}
+  .rl .ftag{display:inline-block;font-size:9px;margin-top:3px;max-width:100%;word-break:break-all}
   .rv{font-size:13px;font-weight:700;text-align:right}
   .rp{font-size:10.5px;color:#94A3B8;text-align:right}
   .row-gr .rv{font-size:16px}
